@@ -19,6 +19,8 @@
 .DS_Store
 *.pem
 *.rdb
+/.cache
+.cache
 
 # debug
 npm-debug.log*

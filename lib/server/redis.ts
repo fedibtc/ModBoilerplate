@@ -1,4 +1,4 @@
-import redis from 'redis';
+import redis from "redis";
 
 let client: redis.RedisClientType;
 
@@ -16,8 +16,6 @@ if (process.env.NODE_ENV === "production") {
   client = redis.createClient();
 }
 
-client
-  .on("error", console.log)
-  .connect();
+client.on("error", console.log).connect();
 
 export default client;

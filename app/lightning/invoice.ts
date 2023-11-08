@@ -1,5 +1,5 @@
 import { ZodSchema, z } from "zod";
-import client from '@/lib/server/redis';
+import client from "@/lib/server/redis";
 import { invoiceVerificationTimeout } from "@/lib/constants";
 
 const { ALBY_ACCESS_TOKEN } = process.env;
@@ -9,11 +9,11 @@ if (!ALBY_ACCESS_TOKEN) {
 }
 
 export interface InvoiceUtilityArgs {
-  /** 
+  /**
    * A Zod Schema for registering and verifying invoices
    */
   schema: ZodSchema;
-  /** 
+  /**
    * Whether to securely create, remember, and verify one-time-use invoices
    */
   rememberInvoices?: boolean;
@@ -23,21 +23,15 @@ export default class InvoiceUtility {
   private schema: ZodSchema;
   private rememberInvoices: boolean;
 
-  constructor({
-    schema,
-    rememberInvoices = false
-  }: InvoiceUtilityArgs) {
+  constructor({ schema, rememberInvoices = false }: InvoiceUtilityArgs) {
     this.schema = schema;
     this.rememberInvoices = rememberInvoices;
   }
-  
-  /** 
+
+  /**
    * Post JSON to an Alby API endpoint with a bearer token
    */
-  private async postJSON<T = Record<string, any>>(
-    path: string,
-    body: T,
-  ) {
+  private async postJSON<T = Record<string, any>>(path: string, body: T) {
     return await fetch("https://api.getalby.com" + path, {
       method: "POST",
       headers: {
@@ -49,7 +43,7 @@ export default class InvoiceUtility {
     }).then((r) => r.json());
   }
 
-  /** 
+  /**
    * Get JSON from an Alby API endpoint with a bearer token
    */
   private async getJSON(path: string) {
@@ -62,7 +56,7 @@ export default class InvoiceUtility {
     }).then((r) => r.json());
   }
 
-  /** 
+  /**
    * Create a lightning invoice
    */
   public async createInvoice(
@@ -82,10 +76,12 @@ export default class InvoiceUtility {
     }
   }
 
-  /** 
+  /**
    * Decode a lightning invoice
    */
-  public async decodeInvoice(bolt11_invoice: string): Promise<DecodeInvoiceResponse> {
+  public async decodeInvoice(
+    bolt11_invoice: string,
+  ): Promise<DecodeInvoiceResponse> {
     try {
       const res = await this.getJSON("/decode/bolt11/" + bolt11_invoice);
       if (res.error) {
@@ -93,50 +89,56 @@ export default class InvoiceUtility {
       }
 
       return res;
-
     } catch (err) {
       console.log(err);
       throw err;
     }
   }
 
-  /** 
+  /**
    * Store a server-generated invoice payment hash to the Redis database for future verification
    */
   public async registerInvoiceHash(payment_hash: string) {
     return await client.set(payment_hash, new Date().toDateString());
   }
 
-  /** 
+  /**
    * Verify (and delete) a server-generated invoice payment hash from the Redis database
    */
   public async verifyInvoiceHash(payment_hash: string): Promise<true> {
-    const trackedInvoice = (await client.get(payment_hash) as string | undefined | null);
+    const trackedInvoice = (await client.get(payment_hash)) as
+      | string
+      | undefined
+      | null;
 
     if (!trackedInvoice) {
-      throw new Error("Could not find invoice")
+      throw new Error("Could not find invoice");
     }
 
     if (
       Date.now() > new Date(trackedInvoice).getTime() &&
-      Date.now() - new Date(trackedInvoice).getTime() <= invoiceVerificationTimeout
+      Date.now() - new Date(trackedInvoice).getTime() <=
+        invoiceVerificationTimeout
     ) {
-      await client.del(payment_hash)
+      await client.del(payment_hash);
       return true;
-    } else if (Date.now() - new Date(trackedInvoice).getTime() > invoiceVerificationTimeout) {
-      await client.del(payment_hash)
-      throw new Error("Invoice timed out")
+    } else if (
+      Date.now() - new Date(trackedInvoice).getTime() >
+      invoiceVerificationTimeout
+    ) {
+      await client.del(payment_hash);
+      throw new Error("Invoice timed out");
     }
 
-    throw new Error("Invoice not verified")
+    throw new Error("Invoice not verified");
   }
 
-  /** 
+  /**
    * Creates an invoice following the structure of the provided Zod Schema. If `rememberInvoices` is true, the invoice will be stored in the Redis database for future reference.
    */
   public async registerInvoiceWithSchema(
     args: Omit<CreateInvoiceArgs, "description" | "memo">,
-    data: z.infer<typeof this.schema>,
+    data: z.infer<InvoiceUtility["schema"]>,
   ): Promise<CreateInvoiceResponse> {
     try {
       const parserResponse = this.schema.safeParse(data);
@@ -145,9 +147,9 @@ export default class InvoiceUtility {
         const res = await this.createInvoice({
           ...args,
           description: Buffer.from(JSON.stringify(data)).toString("base64"),
-        })
+        });
 
-        if(this.rememberInvoices) {
+        if (this.rememberInvoices) {
           await this.registerInvoiceHash(res.payment_hash);
         }
 
@@ -161,14 +163,12 @@ export default class InvoiceUtility {
     }
   }
 
-  /** 
+  /**
    * Decodes an invoice encoded with the provided Zod Schema. If `rememberInvoices` is true, throws an error on an invoice not found in the Redis database.
    */
-  public async verifyInvoiceWithSchema(
-    bolt11_invoice: string,
-  ): Promise<{
+  public async verifyInvoiceWithSchema(bolt11_invoice: string): Promise<{
     invoice: DecodeInvoiceResponse;
-    data: z.infer<typeof this.schema>;
+    data: z.infer<InvoiceUtility["schema"]>;
   }> {
     try {
       const res = await this.decodeInvoice(bolt11_invoice);
@@ -182,18 +182,21 @@ export default class InvoiceUtility {
       const inv = await this.getJSON("/invoices/" + res.payment_hash);
 
       if (!inv) {
-        throw new Error("Cannot find invoice")
+        throw new Error("Cannot find invoice");
       }
 
       if (inv.state !== "SETTLED" || !inv.settled) {
-        throw new Error("Invoice not paid")
+        throw new Error("Invoice not paid");
       }
 
-      if (inv.statue === "EXPIRED" || Date.now() > new Date(inv.expires_at).getTime()) {
-        throw new Error("Invoice expired")
+      if (
+        inv.statue === "EXPIRED" ||
+        Date.now() > new Date(inv.expires_at).getTime()
+      ) {
+        throw new Error("Invoice expired");
       }
 
-      if(this.rememberInvoices) {
+      if (this.rememberInvoices) {
         await this.verifyInvoiceHash(inv.payment_hash);
       }
 

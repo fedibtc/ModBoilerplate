@@ -1,7 +1,6 @@
-import { cva, type VariantProps } from "class-variance-authority";
+import { cva } from "class-variance-authority";
 import * as React from "react";
-
-import { cn } from "@/lib/utils";
+import styled from "./styled";
 
 const textVariants = cva(
   "text-inherit text-base font-normal leading-5 tracking-[-1%]",
@@ -14,42 +13,34 @@ const textVariants = cva(
         body: "text-base",
         caption: "text-sm",
         small: "text-xs",
-        tiny: "text-[10px]"
+        tiny: "text-[10px]",
       },
       weight: {
         normal: "font-normal",
         medium: "font-medium",
         bold: "font-semibold",
-        bolder: "font-bold"
+        bolder: "font-bold",
       },
       ellipsize: {
-        true: "truncate"
-      }
+        true: "truncate",
+      },
     },
     defaultVariants: {
       ellipsize: false,
       variant: "body",
-      weight: "normal"
+      weight: "normal",
     },
   },
 );
 
-export interface TextProps
-  extends React.HTMLAttributes<HTMLDivElement>,
-  VariantProps<typeof textVariants> {
-}
-
-const Text = React.forwardRef<HTMLDivElement, TextProps>(
-  ({ className, variant, weight, ellipsize, ...props }, ref) => {
-    return (
-      <div
-        className={cn(textVariants({ variant, weight, ellipsize, className }))}
-        ref={ref}
-        {...props}
-      />
-    );
-  },
+const Text = styled(textVariants)(
+  ({ className, variant, weight, ellipsize, ...props }, ref, cn) => (
+    <div
+      className={cn({ variant, weight, ellipsize, className })}
+      ref={ref}
+      {...props}
+    />
+  ),
 );
-Text.displayName = "Text";
 
 export { Text, textVariants };
