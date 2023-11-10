@@ -1,5 +1,6 @@
 import "./globals.css";
 import QueryClientProvider from "@/components/providers/query-client-provider";
+import { Toaster } from "@/components/ui/toaster";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -18,7 +19,10 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body>
-        <QueryClientProvider>{children}</QueryClientProvider>
+        <QueryClientProvider>
+          {children}
+          <Toaster />
+        </QueryClientProvider>
       </body>
     </html>
   );

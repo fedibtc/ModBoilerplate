@@ -1,16 +1,11 @@
 "use client";
 
 import * as DialogPrimitive from "@radix-ui/react-dialog";
-import { X } from "lucide-react";
-import * as React from "react";
-
+import { Text } from '@/components/ui/text';
+import Icon from "@/components/ui/icon";
 import { cn } from "@/lib/utils";
-
-const Dialog = DialogPrimitive.Root;
-
-const DialogTrigger = DialogPrimitive.Trigger;
-
-const DialogPortal = DialogPrimitive.Portal;
+import { VariantProps, cva } from "class-variance-authority";
+import React, { useCallback } from "react";
 
 const DialogClose = DialogPrimitive.Close;
 
@@ -21,7 +16,7 @@ const DialogOverlay = React.forwardRef<
   <DialogPrimitive.Overlay
     ref={ref}
     className={cn(
-      "fixed inset-0 z-50 bg-background/80 backdrop-blur-sm data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0",
+      "fixed inset-0 grid place-items-center overflow-auto bg-primary/80 sm:p-0 sm:items-start sm:bg-secondary animate-overlayShow",
       className,
     )}
     {...props}
@@ -29,27 +24,35 @@ const DialogOverlay = React.forwardRef<
 ));
 DialogOverlay.displayName = DialogPrimitive.Overlay.displayName;
 
+const contentVariants = cva(
+  "relative flex flex-col p-[32px] rounded-[20px] w-[90vw] bg-white overflow-hidden sm:p-[24px] sm:w-full sm:h-full sm:rounded-none sm:!max-w-none xs:p-[16px] animate-contentShow",
+  {
+    variants: {
+      size: {
+        sm: "max-w-[340px]",
+        md: "max-w-[500px]",
+        lg: "max-w-[640px]",
+      }
+    },
+    defaultVariants: {
+      size: "md",
+    },
+  }
+)
+
 const DialogContent = React.forwardRef<
   React.ElementRef<typeof DialogPrimitive.Content>,
-  React.ComponentPropsWithoutRef<typeof DialogPrimitive.Content>
->(({ className, children, ...props }, ref) => (
-  <DialogPortal>
-    <DialogOverlay />
-    <DialogPrimitive.Content
-      ref={ref}
-      className={cn(
-        "fixed left-[50%] top-[50%] z-50 grid w-full max-w-lg translate-x-[-50%] translate-y-[-50%] gap-4 border bg-background p-6 shadow-lg duration-200 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[state=closed]:slide-out-to-left-1/2 data-[state=closed]:slide-out-to-top-[48%] data-[state=open]:slide-in-from-left-1/2 data-[state=open]:slide-in-from-top-[48%] sm:rounded-lg md:w-full",
-        className,
-      )}
-      {...props}
-    >
-      {children}
-      <DialogPrimitive.Close className="absolute right-4 top-4 rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none data-[state=open]:bg-accent data-[state=open]:text-muted-foreground">
-        <X className="h-4 w-4" />
-        <span className="sr-only">Close</span>
-      </DialogPrimitive.Close>
-    </DialogPrimitive.Content>
-  </DialogPortal>
+  React.ComponentPropsWithoutRef<typeof DialogPrimitive.Content> & VariantProps<typeof contentVariants>
+>(({ className, children, size, ...props }, ref) => (
+  <DialogPrimitive.Content
+    ref={ref}
+    className={cn(
+      contentVariants({ size, className }),
+    )}
+    {...props}
+  >
+    {children}
+  </DialogPrimitive.Content>
 ));
 DialogContent.displayName = DialogPrimitive.Content.displayName;
 
@@ -59,27 +62,13 @@ const DialogHeader = ({
 }: React.HTMLAttributes<HTMLDivElement>) => (
   <div
     className={cn(
-      "flex flex-col space-y-1.5 text-center sm:text-left",
+      "sm:text-center",
       className,
     )}
     {...props}
   />
 );
 DialogHeader.displayName = "DialogHeader";
-
-const DialogFooter = ({
-  className,
-  ...props
-}: React.HTMLAttributes<HTMLDivElement>) => (
-  <div
-    className={cn(
-      "flex flex-col-reverse sm:flex-row sm:justify-end sm:space-x-2",
-      className,
-    )}
-    {...props}
-  />
-);
-DialogFooter.displayName = "DialogFooter";
 
 const DialogTitle = React.forwardRef<
   React.ElementRef<typeof DialogPrimitive.Title>,
@@ -88,7 +77,7 @@ const DialogTitle = React.forwardRef<
   <DialogPrimitive.Title
     ref={ref}
     className={cn(
-      "text-lg font-semibold leading-none tracking-tight",
+      "mb-[8px]",
       className,
     )}
     {...props}
@@ -102,21 +91,72 @@ const DialogDescription = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <DialogPrimitive.Description
     ref={ref}
-    className={cn("text-sm text-muted-foreground", className)}
+    className={cn("text-darkGrey mb-[20px]", className)}
     {...props}
   />
 ));
 DialogDescription.displayName = DialogPrimitive.Description.displayName;
 
-export {
-  Dialog,
-  DialogClose,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogOverlay,
-  DialogPortal,
-  DialogTitle,
-  DialogTrigger,
-};
+export const Dialog = ({
+  title,
+  description,
+  open,
+  onOpenChange,
+  children,
+  size,
+  disableClose
+}: {
+  open: boolean
+  onOpenChange(open: boolean): void
+  title?: React.ReactNode
+  description?: React.ReactNode
+  children: React.ReactNode
+  size?: 'sm' | 'md' | 'lg'
+  disableClose?: boolean
+}) => {
+  const handleCloseTrigger = useCallback(
+    (ev: Event) => {
+      if (disableClose) ev.preventDefault()
+    },
+    [disableClose],
+  )
+
+  return <DialogPrimitive.Root open={open} onOpenChange={onOpenChange}>
+    <DialogPrimitive.Portal>
+      <DialogOverlay>
+        <DialogContent
+          size={size}
+          onOpenAutoFocus={ev => ev.preventDefault()}
+          onEscapeKeyDown={handleCloseTrigger}
+          onPointerDownOutside={handleCloseTrigger}
+          onInteractOutside={handleCloseTrigger}
+        >
+          {(title || description) && (
+            <DialogHeader>
+              {title && (
+                <DialogTitle>
+                  <Text variant="body" weight="bold">
+                    {title}
+                  </Text>
+                </DialogTitle>
+              )}
+              {description && (
+                <DialogDescription>
+                  <Text variant="caption" weight="medium">
+                    {description}
+                  </Text>
+                </DialogDescription>
+              )}
+            </DialogHeader>
+          )}
+          <div className="grow flex flex-col">{children}</div>
+          {!disableClose && (
+            <DialogClose className="absolute top-[16px] right-[16px] p-[4px] opacity-50 outline-0 cursor-pointer z-[100] hover:opacity-100 focus:opacity-100 sm:top-[18px] sm:right-[18px]">
+              <Icon icon="IconX" size="xs" />
+            </DialogClose>
+          )}
+        </DialogContent>
+      </DialogOverlay>
+    </DialogPrimitive.Portal>
+  </DialogPrimitive.Root>
+}

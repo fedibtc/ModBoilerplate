@@ -1,10 +1,9 @@
-import { cva, type VariantProps } from "class-variance-authority";
-import * as React from "react";
-import Link, { LinkProps } from "next/link";
-
+import Icon, { IconKey } from "@/components/ui/icon";
+import { styled } from "@/components/ui/utils/styled";
 import { cn } from "@/lib/utils";
-import Icon, { IconKey } from "./icon";
-import styled from "./styled";
+import { cva, type VariantProps } from "class-variance-authority";
+import Link, { LinkProps } from "next/link";
+import * as React from "react";
 
 const buttonVariants = cva(
   "relative inline-flex justify-center items-center font-medium rounded-[40px] border-0 no-underline decoration-transparent decoration-0	cursor-pointer transition-button disabled:pointer-events-none",
@@ -54,7 +53,7 @@ type BaseProps = VariantProps<typeof buttonVariants>;
 
 export interface ButtonProps
   extends Omit<React.ButtonHTMLAttributes<HTMLButtonElement>, keyof BaseProps>,
-    VariantProps<typeof buttonVariants> {
+  VariantProps<typeof buttonVariants> {
   icon?: IconKey;
 }
 
@@ -91,7 +90,7 @@ const Button = React.forwardRef<HTMLButtonElement, Props>(
           <div>{children}</div>
         </ButtonContent>
         <ButtonLoader loading={loading}>
-          <Icon size="xs" icon="IconLoader2" className="animate-spin" />
+          <Icon size="xs" icon="IconLoader2" className="animate-load" />
         </ButtonLoader>
       </>
     );
@@ -149,6 +148,7 @@ const Button = React.forwardRef<HTMLButtonElement, Props>(
 );
 
 const ButtonContent = styled(
+  "div",
   cva("flex items-center gap-2 transition-[opacity 100ms ease]", {
     variants: {
       loading: {
@@ -156,7 +156,7 @@ const ButtonContent = styled(
       },
     },
   }),
-)(({ className, loading, children, ...props }, ref, cn) => {
+)(({ props: { className, loading, children, ...props }, ref, cn }) => {
   return (
     <div className={cn({ loading, className })} ref={ref} {...props}>
       {children}
@@ -165,6 +165,7 @@ const ButtonContent = styled(
 });
 
 const ButtonLoader = styled(
+  "div",
   cva(
     "absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none opacity-0",
     {
@@ -175,7 +176,7 @@ const ButtonLoader = styled(
       },
     },
   ),
-)(({ className, loading, ...props }, ref, cn) => {
+)(({ props: { className, loading, ...props }, ref, cn }) => {
   return <div className={cn({ loading, className })} ref={ref} {...props} />;
 });
 

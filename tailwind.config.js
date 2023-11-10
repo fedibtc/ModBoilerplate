@@ -1,37 +1,5 @@
 /** @type {import('tailwindcss').Config} */
 
-function makeHoloGradientRgbas(alphaMultiplier) {
-  return [
-    [224, 32, 32, 0.3],
-    [247, 181, 0, 0.3],
-    [109, 212, 0, 0.3],
-    [0, 145, 255, 0.3],
-    [250, 100, 0, 0.3],
-    [255, 255, 255, 0.1],
-    [98, 54, 255, 0.3],
-    [182, 32, 224, 0.3],
-  ].map(([r, g, b, a]) => `rgba(${r}, ${g}, ${b}, ${a * alphaMultiplier})`)
-}
-
-const holoTheme = {
-  holoGradient: {
-    '900': makeHoloGradientRgbas(1.0),
-    '600': makeHoloGradientRgbas(0.6),
-    '400': makeHoloGradientRgbas(0.3),
-    '100': makeHoloGradientRgbas(0.13),
-  },
-  nightHoloAmbientGradient: [
-    'rgba(224, 32, 32, 0.075)',
-    'rgba(247, 181, 0, 0.075)',
-    'rgba(109, 212, 0, 0.075)',
-    'rgba(0, 145, 255, 0.075)',
-    'rgba(250, 100, 0, 0.075)',
-    'rgba(255, 255, 255, 0.03)',
-    'rgba(98, 54, 255, 0.08)',
-    'rgba(182, 32, 224, 0.08)',
-  ]
-}
-
 module.exports = {
   darkMode: ["class"],
   content: [
@@ -55,7 +23,6 @@ module.exports = {
         black: "rgb(var(--black))",
         night: "rgb(var(--night))",
         blue: "rgb(var(--blue))",
-
         link: "rgb(var(--blue))",
         primary: "rgb(var(--night))",
         primaryLight: "rgb(var(--darkGrey))",
@@ -112,11 +79,49 @@ module.exports = {
     screens: {
       xs: { max: '359px' },
       sm: { max: '600px' },
+      'min-sm': '600px',
       md: { max: '980px' },
       lg: { max: '1280px' },
       xl: { max: '1440px' },
+    },
+    animation: {
+      fadeIn: 'fadeIn 200ms ease',
+      contentShow: 'contentShow 150ms ease',
+      overlayShow: 'overlayShow 150ms ease',
+      load: 'load 1s infinite linear',
+    },
+    keyframes: {
+      fadeIn: {
+        '0%': {
+          opacity: 0
+        },
+        '100%': {
+          opacity: 1
+        }
+      },
+      contentShow: {
+        '0%': {
+          opacity: 0,
+          transform: 'translateY(3%) scale(0.95)'
+        },
+        '100%': {
+          opacity: 1,
+          transform: 'translateY(0) scale(1)'
+        }
+      },
+      load: {
+        '0%': {
+          transform: 'rotate(0deg)'
+        },
+        '100%': {
+          transform: 'rotate(360deg)'
+        }
+      },
+    },
+    transitionProperty: {
+      "loadEnd": "transform 500ms ease"
     }
   },
-  plugins: [],
+  plugins: [require("tailwindcss-animate")],
 }
 
