@@ -73,7 +73,7 @@ export function NostrProvider({ children }: { children: React.ReactNode }) {
 /**
  * Returns a Nostr NDK instance. Throws an error if not used in a NostrProvider or if not initialized.
  */
-export function useNostrNDK(): NDK {
+export function useNDK(): NDK {
   const res = use(NostrContext);
 
   if (res === null) {
@@ -90,7 +90,7 @@ export function useNostrNDK(): NDK {
 /**
  * Returns an NDKUser instance representing the current user over `window.nostr`. Throws an error if not used in a NostrProvider or if not initialized.
  */
-export function useNostrUser(): NDKUser {
+export function useNDKUser(): NDKUser {
   const res = use(NostrContext);
 
   if (res === null) {
