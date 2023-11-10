@@ -1,6 +1,6 @@
+import { Button } from "@/components/ui/button";
 import { useState } from "react";
 import Container from "./container";
-import { Button } from "@/components/ui/button";
 
 export default function Buttons() {
   const sizes = ["md", "sm"] as const;
@@ -32,7 +32,10 @@ export default function Buttons() {
       {sizes.map((size) => (
         <div className="flex flex-col gap-[20px]" key={size}>
           {variants.map((variant) => (
-            <div className="flex items-center gap-[20px] flex-wrap w-full" key={variant}>
+            <div
+              className="flex items-center gap-[20px] flex-wrap w-full"
+              key={variant}
+            >
               <Button
                 size={size}
                 variant={variant}

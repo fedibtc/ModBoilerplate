@@ -26,40 +26,6 @@ export interface NostrProviderType {
 export const NostrContext = createContext<NostrProviderType | null>(null);
 
 /**
- * Returns a Nostr NDK instance. Throws an error if not used in a NostrProvider or if not initialized.
- */
-export function useNostrNDK(): NDK {
-  const res = use(NostrContext);
-
-  if (res === null) {
-    throw new Error("useNostrNDK() Must be used within a NostrProvider");
-  }
-
-  if (typeof res.ndk === "undefined") {
-    throw new Error("Nostr provider is not connected");
-  }
-
-  return res.ndk;
-}
-
-/**
- * Returns an NDKUser instance representing the current user over `window.nostr`. Throws an error if not used in a NostrProvider or if not initialized.
- */
-export function useNostrUser(): NDKUser {
-  const res = use(NostrContext);
-
-  if (res === null) {
-    throw new Error("useNostrUser() Must be used within a NostrProvider");
-  }
-
-  if (typeof res.user === "undefined") {
-    throw new Error("Nostr provider is not connected");
-  }
-
-  return res.user;
-}
-
-/**
  * Connects to `window.nostr`, initializing and exposing `user` and `ndk` through `NostrConnectionContext`.
  */
 export function NostrProvider({ children }: { children: React.ReactNode }) {
@@ -102,4 +68,38 @@ export function NostrProvider({ children }: { children: React.ReactNode }) {
       {children}
     </NostrContext.Provider>
   );
+}
+
+/**
+ * Returns a Nostr NDK instance. Throws an error if not used in a NostrProvider or if not initialized.
+ */
+export function useNostrNDK(): NDK {
+  const res = use(NostrContext);
+
+  if (res === null) {
+    throw new Error("useNostrNDK() Must be used within a NostrProvider");
+  }
+
+  if (typeof res.ndk === "undefined") {
+    throw new Error("Nostr provider is not connected");
+  }
+
+  return res.ndk;
+}
+
+/**
+ * Returns an NDKUser instance representing the current user over `window.nostr`. Throws an error if not used in a NostrProvider or if not initialized.
+ */
+export function useNostrUser(): NDKUser {
+  const res = use(NostrContext);
+
+  if (res === null) {
+    throw new Error("useNostrUser() Must be used within a NostrProvider");
+  }
+
+  if (typeof res.user === "undefined") {
+    throw new Error("Nostr provider is not connected");
+  }
+
+  return res.user;
 }

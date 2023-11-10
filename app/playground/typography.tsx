@@ -1,5 +1,5 @@
-import Container from "./container";
 import { Text } from "@/components/ui/text";
+import Container from "./container";
 
 export default function Typography() {
   const headings = ["display", "h1", "h2"] as const;

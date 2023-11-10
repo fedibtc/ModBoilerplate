@@ -1,11 +1,11 @@
+import Icon, { IconKey } from "@/components/ui/icon";
+import stringUtils from "@/components/ui/utils/StringUtils";
+import { getIdentityColors } from "@/components/ui/utils/colors";
+import { styled } from "@/components/ui/utils/styled";
+import * as RadixAvatar from "@radix-ui/react-avatar";
 import { cva } from "class-variance-authority";
 import { useState } from "react";
 import { z } from "zod";
-import * as RadixAvatar from "@radix-ui/react-avatar";
-import Icon, { IconKey } from "@/components/ui/icon";
-import { getIdentityColors } from "@/components/ui/utils/colors";
-import stringUtils from "@/components/ui/utils/StringUtils";
-import { styled } from "@/components/ui/utils/styled";
 
 export interface AvatarProps {
   id: string;
@@ -20,6 +20,9 @@ export interface AvatarProps {
 
 const iconSizes = { lg: "md", md: "sm", sm: "xs", xs: 12 } as const;
 
+/**
+ * An Avatar component. Includes a fallback or holo background option.
+ */
 export const Avatar: React.FC<AvatarProps> = ({
   id,
   src,
@@ -41,7 +44,11 @@ export const Avatar: React.FC<AvatarProps> = ({
       className={className}
       holo={holo}
       style={{
-        backgroundColor: isFallback ? (holo ? undefined : bgColor) : 'transparent',
+        backgroundColor: isFallback
+          ? holo
+            ? undefined
+            : bgColor
+          : "transparent",
       }}
       {...props}
     >

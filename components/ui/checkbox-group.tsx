@@ -16,6 +16,9 @@ export interface CheckboxGroupProps<T extends string> {
   onChange(values: T[]): void;
 }
 
+/**
+ * A group of Checkboxes
+ */
 export function CheckboxGroup<T extends string>({
   options,
   values,

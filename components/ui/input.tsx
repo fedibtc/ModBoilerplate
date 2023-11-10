@@ -1,7 +1,7 @@
+import { styled } from "@/components/ui/utils/styled";
+import { cn } from "@/lib/utils";
 import { cva } from "class-variance-authority";
 import { useCallback, useState } from "react";
-import { styled } from "@/components/ui/utils/styled";
-import { cn } from '@/lib/utils';
 import { Text } from "./text";
 
 interface CustomProps {
@@ -20,6 +20,9 @@ export type InputProps = CustomProps &
     keyof CustomProps | "className"
   >;
 
+/**
+ * A styled <input> element
+ */
 export function Input({
   label,
   onFocus,
@@ -75,7 +78,10 @@ const Container = styled(
   <label {...props} className={cn({ width, className })} ref={ref} />
 ));
 
-export const Label: React.FC<React.HTMLAttributes<HTMLDivElement>> = ({ className, ...props }) => <div {...props} className={cn("pb-[4px] pl-[6px]", className)} />;
+export const Label: React.FC<React.HTMLAttributes<HTMLDivElement>> = ({
+  className,
+  ...props
+}) => <div {...props} className={cn("pb-[4px] pl-[6px]", className)} />;
 
 const InputWrap = styled(
   "div",

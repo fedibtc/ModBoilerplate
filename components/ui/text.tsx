@@ -1,10 +1,12 @@
+import { Infer, styled } from "@/components/ui/utils/styled";
 import { cva } from "class-variance-authority";
-import * as React from "react";
-import { styled, Infer } from '@/components/ui/utils/styled';
 
-const textVariants = cva(
-  "text-inherit text-base font-normal leading-5 tracking-[-1%]",
-  {
+/**
+ * Text Component with all the typography styles.
+ */
+export const Text = styled(
+  "div",
+  cva("text-inherit text-base font-normal leading-5 tracking-[-1%]", {
     variants: {
       variant: {
         display: "font-bolder text-[80px] leading-[1.5]",
@@ -30,12 +32,7 @@ const textVariants = cva(
       variant: "body",
       weight: "normal",
     },
-  },
-);
-
-export const Text = styled(
-  "div",
-  textVariants,
+  }),
 )(({ props: { className, variant, weight, ellipsize, ...props }, ref, cn }) => (
   <div
     className={cn({ variant, weight, ellipsize, className })}
@@ -44,4 +41,4 @@ export const Text = styled(
   />
 ));
 
-export type TextProps = Infer<typeof Text>
+export type TextProps = Infer<typeof Text>;

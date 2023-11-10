@@ -1,6 +1,6 @@
-import { ZodSchema, z } from "zod";
-import client from "@/lib/server/redis";
 import { invoiceVerificationTimeout } from "@/lib/constants";
+import client from "@/lib/server/redis";
+import { ZodSchema, z } from "zod";
 
 const { ALBY_ACCESS_TOKEN } = process.env;
 
@@ -19,6 +19,9 @@ export interface InvoiceUtilityArgs {
   rememberInvoices?: boolean;
 }
 
+/**
+ * Lightning Invoice Utility for creating and verifying invoices.
+ */
 export default class InvoiceUtility {
   private schema: ZodSchema;
   private rememberInvoices: boolean;

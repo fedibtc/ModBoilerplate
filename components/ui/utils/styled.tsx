@@ -1,9 +1,17 @@
+import { cn } from "@/lib/utils";
 import { type VariantProps } from "class-variance-authority";
 import * as React from "react";
-import { cn } from "@/lib/utils";
 import { ZodObject, z } from "zod";
 
-type Tag = "input" | "button" | "textarea" | "img" | "label" | "div" | "span" | "form";
+type Tag =
+  | "input"
+  | "button"
+  | "textarea"
+  | "img"
+  | "label"
+  | "div"
+  | "span"
+  | "form";
 
 type Element<T extends Tag> = T extends "input"
   ? HTMLInputElement
@@ -54,6 +62,9 @@ interface RenderFunction<
   displayName?: string;
 }
 
+/**
+ * Styled variant component utility
+ */
 export function styled<
   T extends Tag,
   V extends (...args: any) => any,

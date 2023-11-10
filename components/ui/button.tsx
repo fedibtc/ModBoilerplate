@@ -53,7 +53,7 @@ type BaseProps = VariantProps<typeof buttonVariants>;
 
 export interface ButtonProps
   extends Omit<React.ButtonHTMLAttributes<HTMLButtonElement>, keyof BaseProps>,
-  VariantProps<typeof buttonVariants> {
+    VariantProps<typeof buttonVariants> {
   icon?: IconKey;
 }
 
@@ -66,6 +66,9 @@ type ButtonExternalLinkProps = BaseProps &
 
 type Props = ButtonProps | ButtonLinkProps | ButtonExternalLinkProps;
 
+/**
+ * A button.
+ */
 const Button = React.forwardRef<HTMLButtonElement, Props>(
   (
     {

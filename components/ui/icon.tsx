@@ -1,5 +1,5 @@
-import { TablerIconsProps } from "@tabler/icons-react";
 import * as Icons from "@tabler/icons-react";
+import { TablerIconsProps } from "@tabler/icons-react";
 
 const sizes = {
   xxs: 12,
@@ -17,14 +17,10 @@ export interface IconProps extends TablerIconsProps {
   size: keyof typeof sizes | number;
 }
 
-/** 
+/**
  * Renders an icon component from Tabler Icons.
  */
-export default function Icon({
-  icon,
-  size = "xs",
-  ...props
-}: IconProps) {
+export default function Icon({ icon, size = "xs", ...props }: IconProps) {
   const Comp = Icons[icon];
 
   return (

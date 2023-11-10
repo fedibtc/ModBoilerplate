@@ -1,14 +1,14 @@
 "use client";
 
 import {
-  QueryClient,
   QueryClientProvider as ClientProvider,
+  QueryClient,
 } from "@tanstack/react-query";
 
 const queryClient = new QueryClient();
 
 /**
- * The equivalent of @tanstack/react-query's `QueryClientProvider`, transformed into a client component.
+ * The equivalent of @tanstack/react-query's `QueryClientProvider`, forwarded with "use client".
  */
 export default function QueryClientProvider({
   children,

@@ -1,10 +1,10 @@
-import { styled, Infer } from "@/components/ui/utils/styled";
-import { cva } from "class-variance-authority";
+import { Text } from "@/components/ui/text";
+import { Infer, styled } from "@/components/ui/utils/styled";
+import { cn } from "@/lib/utils";
 import * as RadixLabel from "@radix-ui/react-label";
 import * as RadixRadio from "@radix-ui/react-radio-group";
+import { cva } from "class-variance-authority";
 import { z } from "zod";
-import { Text } from "@/components/ui/text";
-import { cn } from "@/lib/utils";
 
 type TextProps = Infer<typeof Text>;
 
@@ -14,7 +14,7 @@ interface RadioOption<T extends string> {
   disabled?: boolean;
 }
 
-export interface RadioProps<T extends string> {
+export interface RadioGroupProps<T extends string> {
   options: readonly RadioOption<T>[];
   value: T | undefined;
   disabled?: boolean;
@@ -22,12 +22,15 @@ export interface RadioProps<T extends string> {
   onChange(value: T): void;
 }
 
+/**
+ * A group of Radio Buttons.
+ */
 export function RadioGroup<T extends string>({
   options,
   onChange,
   labelTextProps,
   ...props
-}: RadioProps<T>): React.ReactElement {
+}: RadioGroupProps<T>): React.ReactElement {
   return (
     // @ts-expect-error Type param issue with Zod
     <Root onValueChange={onChange} {...props}>
@@ -95,7 +98,18 @@ const Radio = styled(
   <RadixRadio.Item {...props} value={value} className={cn({ className })} />
 ));
 
-const RadioIndicator: React.FC<React.HTMLAttributes<HTMLSpanElement>> = ({ className, ...props }) => <RadixRadio.Indicator {...props} className={cn("absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[10px] h-[10px] rounded-full data-[state=checked]:bg-primary", className)} />;
+const RadioIndicator: React.FC<React.HTMLAttributes<HTMLSpanElement>> = ({
+  className,
+  ...props
+}) => (
+  <RadixRadio.Indicator
+    {...props}
+    className={cn(
+      "absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[10px] h-[10px] rounded-full data-[state=checked]:bg-primary",
+      className,
+    )}
+  />
+);
 
 const Label = styled(
   "div",

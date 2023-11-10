@@ -18,37 +18,7 @@ export interface WebLNProviderType {
 export const WebLNContext = createContext<WebLNProviderType | null>(null);
 
 /**
- * Returns a `WebLNProvider` instance. Throws an error if not used in a WebLNProvider or if not initialized.
- */
-export function useWebLN(): WebLNProvider {
-  const res = use(WebLNContext);
-
-  if (res === null) {
-    throw new Error("useWebLN must be used within a WebLNProvider");
-  }
-
-  if (typeof res.webln === "undefined") {
-    throw new Error("WebLN provider is not connected");
-  }
-
-  return res.webln;
-}
-
-/**
- * Returnes the value of `WebLNContext`. Throws an error if not used within a WebLNProvider.
- */
-export function useWebLNContext(): WebLNProviderType {
-  const res = use(WebLNContext);
-
-  if (res === null) {
-    throw new Error("useWebLNContext must be used within a WebLNProvider");
-  }
-
-  return res;
-}
-
-/**
- * Connects to `window.webln`, enabling and exposing `webln` through `WebLnConnectionContext`.
+ * Connects to `window.webln`, enabling and exposing `webln` through `WebLNContext`.
  */
 export function WebLNProvider({ children }: { children: React.ReactNode }) {
   const {
@@ -78,4 +48,34 @@ export function WebLNProvider({ children }: { children: React.ReactNode }) {
       {children}
     </WebLNContext.Provider>
   );
+}
+
+/**
+ * Returns a `WebLNProvider` instance. Throws an error if not used in a WebLNProvider or if not initialized.
+ */
+export function useWebLN(): WebLNProvider {
+  const res = use(WebLNContext);
+
+  if (res === null) {
+    throw new Error("useWebLN must be used within a WebLNProvider");
+  }
+
+  if (typeof res.webln === "undefined") {
+    throw new Error("WebLN provider is not connected");
+  }
+
+  return res.webln;
+}
+
+/**
+ * Returnes the value of `WebLNContext`. Throws an error if not used within a WebLNProvider.
+ */
+export function useWebLNContext(): WebLNProviderType {
+  const res = use(WebLNContext);
+
+  if (res === null) {
+    throw new Error("useWebLNContext must be used within a WebLNProvider");
+  }
+
+  return res;
 }

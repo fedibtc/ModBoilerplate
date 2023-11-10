@@ -1,7 +1,7 @@
-import "./globals.css";
 import QueryClientProvider from "@/components/providers/query-client-provider";
 import { Toaster } from "@/components/ui/toaster";
 import { Metadata } from "next";
+import "./globals.css";
 
 export const metadata: Metadata = {
   title: "Fedi Mod Boilerplate",

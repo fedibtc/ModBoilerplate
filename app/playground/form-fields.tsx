@@ -1,10 +1,10 @@
-import { useState } from "react";
-import Container from "./container";
-import { Text } from '@/components/ui/text';
 import { Checkbox } from "@/components/ui/checkbox";
-import { RadioGroup } from "@/components/ui/radio";
 import { CheckboxGroup } from "@/components/ui/checkbox-group";
 import { Input } from "@/components/ui/input";
+import { RadioGroup } from "@/components/ui/radio";
+import { Text } from "@/components/ui/text";
+import { useState } from "react";
+import Container from "./container";
 
 export default function FormFields() {
   const [oneChecked, setOneChecked] = useState(false);

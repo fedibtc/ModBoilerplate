@@ -1,7 +1,12 @@
 // Inspired by react-hot-toast library
 import * as React from "react";
 
-import type { ToastActionElement, ToastProps } from "@/components/ui/toast";
+import { toastVariants } from "@/components/ui/toaster";
+import { Root, ToastAction } from "@radix-ui/react-toast";
+import { VariantProps } from "class-variance-authority";
+
+type ToastProps = React.ComponentPropsWithoutRef<typeof Root> &
+  VariantProps<typeof toastVariants>;
 
 const TOAST_LIMIT = 1;
 const TOAST_REMOVE_DELAY = 1000000;
@@ -10,7 +15,7 @@ type ToasterToast = ToastProps & {
   id: string;
   title?: React.ReactNode;
   description?: React.ReactNode;
-  action?: ToastActionElement;
+  action?: React.ReactElement<typeof ToastAction>;
 };
 
 const actionTypes = {
@@ -166,7 +171,7 @@ function toast({ ...props }: Toast) {
   };
 }
 
-function useToast() {
+export function useToast() {
   const [state, setState] = React.useState<State>(memoryState);
 
   React.useEffect(() => {
@@ -185,5 +190,3 @@ function useToast() {
     dismiss: (toastId?: string) => dispatch({ type: "DISMISS_TOAST", toastId }),
   };
 }
-
-export { toast, useToast };

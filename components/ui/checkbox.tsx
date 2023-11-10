@@ -1,8 +1,8 @@
+import Icon from "@/components/ui/icon";
+import { Text } from "@/components/ui/text";
+import { Infer, styled } from "@/components/ui/utils/styled";
 import * as RadixCheckbox from "@radix-ui/react-checkbox";
 import * as RadixLabel from "@radix-ui/react-label";
-import { styled, Infer } from "@/components/ui/utils/styled";
-import { Text } from "@/components/ui/text";
-import Icon from "@/components/ui/icon";
 import { cva } from "class-variance-authority";
 import { z } from "zod";
 
@@ -15,6 +15,9 @@ export interface CheckboxProps {
   onChange?: (checked: boolean) => void;
 }
 
+/**
+ * An individual Checkbox component.
+ */
 export const Checkbox: React.FC<CheckboxProps> = ({
   label,
   onChange,
@@ -87,8 +90,10 @@ const Label = styled(
   cva("grow", {
     variants: {
       disabled: {
-        true: "opacity-50 cursor-not-allowed"
+        true: "opacity-50 cursor-not-allowed",
       },
     },
   }),
-)(({ props: { className, disabled, ...props }, cn }) => <div {...props} className={cn({ disabled, className })} />);
+)(({ props: { className, disabled, ...props }, cn }) => (
+  <div {...props} className={cn({ disabled, className })} />
+));
