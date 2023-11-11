@@ -14,7 +14,7 @@ export type IconKey = Exclude<keyof typeof Icons, "createReactComponent">;
 
 export interface IconProps extends TablerIconsProps {
   icon: IconKey;
-  size: keyof typeof sizes | number;
+  size?: keyof typeof sizes | number;
 }
 
 /**

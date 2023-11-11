@@ -11,7 +11,7 @@ export default function Container({
   return (
     <div
       className={cn(
-        "flex flex-col gap-[20px] rounded-[20px] p-[48px] bg-white drop-shadow-2x sm:p-[20px] sm:drop-shadow-md sm:rounded-none",
+        "flex flex-col gap-lg rounded-[8px] p-[48px] bg-white drop-shadow-xl sm:p-[20px] sm:drop-shadow-sm",
         className,
       )}
       {...props}

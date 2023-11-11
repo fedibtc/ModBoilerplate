@@ -28,6 +28,7 @@
     "qrloop": "^1.4.1",
     "react": "^18",
     "react-dom": "^18",
+    "react-qr-code": "^2.0.12",
     "redis": "^4.6.10",
     "tailwind-merge": "^1.14.0",
     "tailwindcss-animate": "^1.0.7",

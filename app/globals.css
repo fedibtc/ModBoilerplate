@@ -85,4 +85,7 @@
     color: inherit;
     height: 100%;
   }
+  ul {
+    @apply list-disc list-inside;
+  }
 }

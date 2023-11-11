@@ -1,6 +1,6 @@
 "use client";
 import { useQuery } from "@tanstack/react-query";
-import { createContext, use } from "react";
+import { createContext, useContext } from "react";
 import { WebLNProvider } from "webln";
 
 export interface WebLNProviderType {
@@ -54,7 +54,7 @@ export function WebLNProvider({ children }: { children: React.ReactNode }) {
  * Returns a `WebLNProvider` instance. Throws an error if not used in a WebLNProvider or if not initialized.
  */
 export function useWebLN(): WebLNProvider {
-  const res = use(WebLNContext);
+  const res = useContext(WebLNContext);
 
   if (res === null) {
     throw new Error("useWebLN must be used within a WebLNProvider");
@@ -71,7 +71,7 @@ export function useWebLN(): WebLNProvider {
  * Returnes the value of `WebLNContext`. Throws an error if not used within a WebLNProvider.
  */
 export function useWebLNContext(): WebLNProviderType {
-  const res = use(WebLNContext);
+  const res = useContext(WebLNContext);
 
   if (res === null) {
     throw new Error("useWebLNContext must be used within a WebLNProvider");
