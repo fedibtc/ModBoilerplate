@@ -65,7 +65,7 @@ export const Dialog = ({
             )}
             <div className="grow flex flex-col">{children}</div>
             {!disableClose && (
-              <RadixDialog.Close className="absolute top-[16px] right-[16px] p-[4px] opacity-50 outline-0 cursor-pointer z-[100] hover:opacity-100 focus:opacity-100 sm:top-[18px] sm:right-[18px]">
+              <RadixDialog.Close className="absolute top-lg right-lg p-xs opacity-50 outline-0 cursor-pointer z-[100] hover:opacity-100 focus:opacity-100 sm:top-[18px] sm:right-[18px]">
                 <Icon icon="IconX" size="xs" />
               </RadixDialog.Close>
             )}
@@ -131,11 +131,7 @@ const DialogTitle = React.forwardRef<
   React.ElementRef<typeof RadixDialog.Title>,
   React.ComponentPropsWithoutRef<typeof RadixDialog.Title>
 >(({ className, ...props }, ref) => (
-  <RadixDialog.Title
-    ref={ref}
-    className={cn("mb-[8px]", className)}
-    {...props}
-  />
+  <RadixDialog.Title ref={ref} className={cn("mb-lg", className)} {...props} />
 ));
 
 const DialogDescription = React.forwardRef<
@@ -144,7 +140,7 @@ const DialogDescription = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <RadixDialog.Description
     ref={ref}
-    className={cn("text-darkGrey mb-[20px]", className)}
+    className={cn("text-darkGrey mb-20", className)}
     {...props}
   />
 ));

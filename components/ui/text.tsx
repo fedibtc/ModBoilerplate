@@ -6,16 +6,16 @@ import { cva } from "class-variance-authority";
  */
 export const Text = styled(
   "div",
-  cva("text-inherit text-base font-normal leading-5 tracking-[-1%]", {
+  cva("text-inherit text-body leading-5 tracking-[-1%]", {
     variants: {
       variant: {
-        display: "font-bolder text-[80px] leading-[1.5]",
-        h1: "font-bolder text-[32px] leading-[1.5]",
-        h2: "font-bolder text-2xl leading-[1.5]",
+        display: "font-bolder text-display leading-[1.5]",
+        h1: "font-bolder text-h1 leading-[1.5]",
+        h2: "font-bolder text-h2 leading-[1.5]",
         body: "text-base",
         caption: "text-sm",
         small: "text-xs",
-        tiny: "text-[10px]",
+        tiny: "text-tiny",
       },
       weight: {
         normal: "font-normal",

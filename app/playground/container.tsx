@@ -11,16 +11,16 @@ export default function Container({
   return (
     <div
       className={cn(
-        "flex flex-col gap-lg rounded-[8px] p-[48px] bg-white drop-shadow-xl sm:p-[20px] sm:drop-shadow-sm",
+        "flex flex-col gap-lg rounded-lg p-xl bg-white drop-shadow-xl sm:p-lx sm:drop-shadow-sm",
         className,
       )}
       {...props}
     >
-      <div className="flex flex-col gap-[10px]">
+      <div className="flex flex-col gap-10">
         <Text variant="h1" weight="bolder">
           {title}
         </Text>
-        <div className="w-full h-[4px] bg-holo-600" />
+        <div className="w-full h-xs bg-holo-600" />
       </div>
       {children}
     </div>

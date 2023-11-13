@@ -124,7 +124,7 @@ function WebLNExample() {
       >
         {createdInvoice ? (
           <div className="flex flex-col gap-lg">
-            <div className="flex flex-col w-full gap-md p-md border border-extraLightGrey rounded-[8px] shadow-sm">
+            <div className="flex flex-col w-full gap-md p-md border border-extraLightGrey rounded-lg shadow-sm">
               <QRCode
                 value={createdInvoice}
                 className="bg-white w-full h-auto"
@@ -188,7 +188,7 @@ function WebLNExample() {
             <Button
               variant="tertiary"
               type="button"
-              className="px-0 w-[44px] shrink-0"
+              className="!px-0 w-[44px] shrink-0"
               onClick={() => setScanning(true)}
             >
               <Icon icon="IconQrcode" size="md" />

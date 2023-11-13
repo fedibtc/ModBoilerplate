@@ -41,7 +41,7 @@ export default function Dialogs() {
 
   return (
     <Container title="Dialog">
-      <div className="flex gap-[16px]">
+      <div className="flex gap-md">
         <div>
           Size
           <RadioGroup
@@ -67,7 +67,7 @@ export default function Dialogs() {
         open={open}
         onOpenChange={setOpen}
       >
-        <form className="flex flex-col gap-[16px]" onSubmit={handleSubmit}>
+        <form className="flex flex-col gap-md" onSubmit={handleSubmit}>
           <Input
             label="Field one"
             value={value1}
@@ -79,7 +79,7 @@ export default function Dialogs() {
             value={value2}
             onChange={(ev) => setValue2(ev.currentTarget.value)}
           />
-          <div className="flex gap-[8px]">
+          <div className="flex gap-sm">
             <Button type="submit">Save</Button>
             <Button
               type="submit"

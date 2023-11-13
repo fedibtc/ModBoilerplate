@@ -81,12 +81,12 @@ const Container = styled(
 export const Label: React.FC<React.HTMLAttributes<HTMLDivElement>> = ({
   className,
   ...props
-}) => <div {...props} className={cn("pb-[4px] pl-[6px]", className)} />;
+}) => <div {...props} className={cn("pb-xs pl-[6px]", className)} />;
 
 const InputWrap = styled(
   "div",
   cva(
-    "inline-flex items-center h-[48px] bg-white border-2 border-lightGrey rounded-[8px] transition-[border-color 80ms ease]",
+    "inline-flex items-center h-xxl bg-white border-2 border-lightGrey rounded-lg transition-[border-color 80ms ease]",
     {
       variants: {
         isFocused: {
@@ -111,7 +111,7 @@ const InputWrap = styled(
 const TextInput = styled(
   "input",
   cva(
-    "grow min-w-[60px] h-full p-[12px] border-0 bg-transparent focus:outline-0 active:outline-0 disabled:cursor-not-allowed placeholder:text-grey",
+    "grow min-w-[60px] h-full p-md border-0 bg-transparent focus:outline-0 active:outline-0 disabled:cursor-not-allowed placeholder:text-grey",
     {
       variants: {
         textOverflow: {

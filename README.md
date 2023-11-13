@@ -1,5 +1,7 @@
 # Fedi Mod Boilerplate
 
+A template for building Fedi Mods with on-brand UI and Lightning/Nostr utilities over [Alby](https://getalby.com).
+
 ## Providers
 
 ### NostProvider

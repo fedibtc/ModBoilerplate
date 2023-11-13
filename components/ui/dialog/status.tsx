@@ -101,7 +101,7 @@ const Container = styled(
 const Content = styled(
   "div",
   cva(
-    "absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[80%] max-w-[280px] aspect-square rounded-full z-[2] flex flex-col justify-center items-center text-center gap-[8px] bg-white",
+    "absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[80%] max-w-[280px] aspect-square rounded-full z-[2] flex flex-col justify-center items-center text-center gap-sm bg-white",
   ),
 )(({ props: { className, ...props }, cn }) => (
   <div {...props} className={cn({ className })} />

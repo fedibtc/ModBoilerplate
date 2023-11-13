@@ -56,7 +56,7 @@ export function RadioGroup<T extends string>({
 
 const Root = styled(
   "div",
-  cva("flex flex-col gap-[10px]"),
+  cva("flex flex-col gap-10"),
   z.object({
     name: z.string().optional(),
     required: z.boolean().optional(),
@@ -74,7 +74,7 @@ const Root = styled(
 
 const Item = styled(
   "label",
-  cva("flex items-center gap-[10px] cursor-pointer", {
+  cva("flex items-center gap-10 cursor-pointer", {
     variants: {
       disabled: {
         true: "cursor-not-allowed",
@@ -105,7 +105,7 @@ const RadioIndicator: React.FC<React.HTMLAttributes<HTMLSpanElement>> = ({
   <RadixRadio.Indicator
     {...props}
     className={cn(
-      "absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[10px] h-[10px] rounded-full data-[state=checked]:bg-primary",
+      "absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-10 h-10 rounded-full data-[state=checked]:bg-primary",
       className,
     )}
   />

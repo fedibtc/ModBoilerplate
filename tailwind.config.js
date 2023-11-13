@@ -26,11 +26,6 @@ module.exports = {
         "holo-900":
           "radial-gradient(89.9% 222.34% at 7.36% 24.19%, rgba(224, 32, 32, 0.3), rgba(247, 181, 0, 0.3), rgba(109, 212, 0, 0.3), rgba(0, 145, 255, 0.3), rgba(250, 100, 0, 0.3), rgba(255, 255, 255, 0.1), rgba(98, 54, 255, 0.3), rgba(182, 32, 224, 0.3))",
       },
-      borderRadius: {
-        lg: "var(--radius)",
-        md: "calc(var(--radius) - 2px)",
-        sm: "calc(var(--radius) - 4px)",
-      },
       boxShadow: {
         "secondary-inset": "0 0 0 0.25px rgb(var(--lightGrey)) inset",
       },
@@ -124,6 +119,9 @@ module.exports = {
         lg: "16px",
         xl: "24px",
         xxl: "48px",
+        10: "10px",
+        20: "20px",
+        40: "40px",
       },
       transitionProperty: {
         button:

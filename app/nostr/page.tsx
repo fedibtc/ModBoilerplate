@@ -13,19 +13,16 @@ import { useToast } from "@/components/ui/hooks/use-toast";
 import Icon from "@/components/ui/icon";
 import { Input } from "@/components/ui/input";
 import { Text } from "@/components/ui/text";
-import { NDKSubscription, NDKUserProfile } from "@nostr-dev-kit/ndk";
-import { useEffect, useRef, useState } from "react";
+import { NDKUserProfile } from "@nostr-dev-kit/ndk";
+import { useEffect, useState } from "react";
 
 function NostrExample() {
   const user = useNDKUser();
-
   const [profile, setProfile] = useState<null | NDKUserProfile>(
     user?.profile ?? null,
   );
 
   const { toast } = useToast();
-
-  const sub = useRef<NDKSubscription | null>(null);
 
   const copyNpub = async () => {
     try {
@@ -59,8 +56,7 @@ function NostrExample() {
   return (
     <div className="flex flex-col grow gap-lg items-center justify-center">
       <Text variant="h2">Nostr Demo</Text>
-
-      {profile && (
+      {profile ? (
         <div className="flex gap-md items-center w-full">
           <Avatar
             id={Math.random().toString(36).slice(2)}
@@ -84,6 +80,11 @@ function NostrExample() {
             )}
           </div>
         </div>
+      ) : (
+        <div className="flex gap-2 items-center justify-center">
+          <Text className="text-grey">Loading Profile...</Text>
+          <Icon icon="IconLoader2" className="text-grey animate-load" />
+        </div>
       )}
 
       <div className="flex gap-sm items-end w-full">
@@ -91,7 +92,7 @@ function NostrExample() {
         <Button
           variant="tertiary"
           type="button"
-          className="px-0 w-[44px] shrink-0"
+          className="!px-0 w-[44px] shrink-0"
           onClick={copyNpub}
         >
           <Icon icon="IconCopy" size="md" />

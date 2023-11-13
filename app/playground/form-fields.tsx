@@ -33,10 +33,10 @@ export default function FormFields() {
 
   return (
     <Container title="Form Fields">
-      <div className="flex flex-col gap-[10px]">
+      <div className="flex flex-col gap-10">
         <Text variant="h2">Solo Checkboxes</Text>
 
-        <div className="flex flex-col gap-[10px]">
+        <div className="flex flex-col gap-10">
           <Checkbox
             checked={oneChecked}
             onChange={setOneChecked}
@@ -53,7 +53,7 @@ export default function FormFields() {
         </div>
       </div>
 
-      <div className="flex flex-col gap-[10px]">
+      <div className="flex flex-col gap-10">
         <Text variant="h2">Radio group</Text>
         <RadioGroup
           options={groupOptions}
@@ -62,7 +62,7 @@ export default function FormFields() {
         />
       </div>
 
-      <div className="flex flex-col gap-[10px]">
+      <div className="flex flex-col gap-10">
         <Text variant="h2">Checkbox group</Text>
         <CheckboxGroup
           options={groupOptions}
@@ -71,7 +71,7 @@ export default function FormFields() {
         />
       </div>
 
-      <div className="flex flex-col gap-[10px]">
+      <div className="flex flex-col gap-10">
         <Text variant="h2">Inputs</Text>
         <Input
           label="Default input"

@@ -22,7 +22,6 @@
     "alby-tools": "^3.2.1",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.0.0",
-    "light-bolt11-decoder": "^3.0.0",
     "next": "latest",
     "qr-scanner": "^1.4.2",
     "qrloop": "^1.4.1",
@@ -48,6 +47,6 @@
     "prettier-plugin-organize-imports": "^3.2.4",
     "tailwindcss": "^3",
     "typescript": "^5.2.2",
-    "vercel": "^32.5.0"
+    "vercel": "^32.5.3"
   }
 }

@@ -64,7 +64,7 @@ export default function Scanner({
   return (
     <video
       ref={ref}
-      className={`rounded-[12px] overflow-hidden aspect-square grow w-full max-w-[480px] ${
+      className={`rounded-xl overflow-hidden aspect-square grow w-full max-w-[480px] ${
         scanning ? "block" : "hidden"
       } object-cover`}
     />

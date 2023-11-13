@@ -18,22 +18,22 @@ export default function Buttons() {
 
   return (
     <Container title="Button">
-      <div className="flex items-center gap-[20px]">
+      <div className="flex items-center gap-20">
         <button onClick={toggleLoading}>
           Toggle loading ({isLoading ? "true" : "false"})
         </button>
         <button onClick={toggleDisabled}>Toggle disabled</button>
       </div>
 
-      <div className="flex flex-col gap-[20px]">
-        <div className="flex items-center gap-[20px]"></div>
+      <div className="flex flex-col gap-20">
+        <div className="flex items-center gap-20"></div>
       </div>
 
       {sizes.map((size) => (
-        <div className="flex flex-col gap-[20px]" key={size}>
+        <div className="flex flex-col gap-20" key={size}>
           {variants.map((variant) => (
             <div
-              className="flex items-center gap-[20px] flex-wrap w-full"
+              className="flex items-center gap-20 flex-wrap w-full"
               key={variant}
             >
               <Button

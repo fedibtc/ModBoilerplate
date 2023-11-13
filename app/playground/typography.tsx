@@ -8,7 +8,7 @@ export default function Typography() {
 
   return (
     <Container title="Typography">
-      <div className="flex flex-col gap-[10px]">
+      <div className="flex flex-col gap-10">
         {headings.map((heading) => (
           <Text key={heading} variant={heading} weight="bolder">
             Heading variant {heading}
@@ -17,7 +17,7 @@ export default function Typography() {
       </div>
 
       {variants.map((variant) => (
-        <div className="flex flex-col gap-[10px]" key={variant}>
+        <div className="flex flex-col gap-10" key={variant}>
           {weights.map((weight) => (
             <Text key={weight} variant={variant} weight={weight}>
               Text variant {variant} ({weight})

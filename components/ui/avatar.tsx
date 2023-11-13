@@ -18,7 +18,7 @@ export interface AvatarProps {
   className?: string;
 }
 
-const iconSizes = { lg: "md", md: "sm", sm: "xs", xs: 12 } as const;
+const iconSizes = { lg: "md", md: "sm", sm: "xs", xs: "xxs" } as const;
 
 /**
  * An Avatar component. Includes a fallback or holo background option.
@@ -79,14 +79,14 @@ const Root = styled(
     {
       variants: {
         size: {
-          xs: "w-[20px] h-[20px] text-[8px]",
-          sm: "w-[32px] h-[32px] text-[10px]",
-          md: "w-[48px] h-[48px] text-[16px]",
-          lg: "w-[88px] h-[88px] text-[24px]",
+          xs: "w-20 h-20 text-[8px]",
+          sm: "w-[32px] h-[32px] text-tiny",
+          md: "w-xxl h-xxl text-body",
+          lg: "w-[88px] h-[88px] text-h2",
         },
         shape: {
           circle: "rounded-full",
-          square: "rounded-[4px]",
+          square: "rounded",
         },
         holo: {
           true: "bg-holo-600",
@@ -96,17 +96,17 @@ const Root = styled(
         {
           size: "sm",
           shape: "square",
-          className: "rounded-[4px]",
+          className: "rounded",
         },
         {
           size: "md",
           shape: "square",
-          className: "rounded-[6px]",
+          className: "rounded-md",
         },
         {
           size: "lg",
           shape: "square",
-          className: "rounded-[8px]",
+          className: "rounded-lg",
         },
       ],
       defaultVariants: {

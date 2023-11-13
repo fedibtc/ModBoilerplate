@@ -6,7 +6,7 @@ import Link, { LinkProps } from "next/link";
 import * as React from "react";
 
 const buttonVariants = cva(
-  "relative inline-flex justify-center items-center font-medium rounded-[40px] border-0 no-underline decoration-transparent decoration-0	cursor-pointer transition-button disabled:pointer-events-none",
+  "relative inline-flex justify-center items-center font-medium rounded-[40px] border-0 no-underline decoration-transparent decoration-0 cursor-pointer transition-button disabled:pointer-events-none",
   {
     variants: {
       variant: {
@@ -20,9 +20,9 @@ const buttonVariants = cva(
           "bg-transparent text-primary !border-solid !border-2 !border-primary hover:bg-primary/5 active:bg-primary/10",
       },
       size: {
-        md: "h-[48px] px-[48px] text-sm",
+        md: "h-xxl px-xxl text-sm",
         sm: "h-[32px] px-[26px] text-sm",
-        xs: "h-[24px] px-[20px] text-xs",
+        xs: "h-xl px-20 text-xs",
       },
       width: {
         auto: "w-auto",

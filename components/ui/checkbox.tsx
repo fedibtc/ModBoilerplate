@@ -44,7 +44,7 @@ export const Checkbox: React.FC<CheckboxProps> = ({
 
 const Root = styled(
   "label",
-  cva("flex items-center gap-[10px] cursor-pointer", {
+  cva("flex items-center gap-10 cursor-pointer", {
     variants: {
       disabled: {
         true: "cursor-not-allowed",
@@ -58,7 +58,7 @@ const Root = styled(
 export const CheckboxRoot = styled(
   "button",
   cva(
-    "relative inline-flex justify-center items-center shrink-0 w-[22px] h-[22px] p-0 bg-white border-solid border-2 border-primary rounded-[4px] cursor-pointer data-[state=checked]:bg-primary data-[disabled]:opacity-50 data-[disabled]:cursor-not-allowed disabled:opacity-50 disabled:cursor-not-allowed",
+    "relative inline-flex justify-center items-center shrink-0 w-[22px] h-[22px] p-0 bg-white border-solid border-2 border-primary rounded cursor-pointer data-[state=checked]:bg-primary data-[disabled]:opacity-50 data-[disabled]:cursor-not-allowed disabled:opacity-50 disabled:cursor-not-allowed",
   ),
   z.object({
     checked: z

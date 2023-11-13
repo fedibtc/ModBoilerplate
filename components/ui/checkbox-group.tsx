@@ -37,7 +37,7 @@ export function CheckboxGroup<T extends string>({
   );
 
   return (
-    <div className="flex flex-col gap-[10px]">
+    <div className="flex flex-col gap-10">
       {options.map(({ value, disabled, ...checkboxProps }) => (
         <Checkbox
           key={value}

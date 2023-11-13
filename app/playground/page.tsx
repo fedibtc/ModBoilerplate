@@ -1,6 +1,5 @@
 "use client";
 
-import Container from "@/components/container";
 import Icon from "@/components/ui/icon";
 import Link from "next/link";
 import Avatars from "./avatars";
@@ -12,19 +11,24 @@ import Typography from "./typography";
 
 export default function Playground() {
   return (
-    <Container>
-      <div className="flex flex-col gap-lg rounded-[8px] p-[48px] bg-white drop-shadow-xl sm:p-[20px] sm:drop-shadow-sm">
-        <Link href="/" className="text-grey inline-flex gap-sm items-center">
-          <Icon icon="IconChevronLeft" />
-          <span>Home</span>
-        </Link>
+    <div className="w-full min-h-screen bg-holo-400 flex justify-center">
+      <div className="min-h-full max-w-[480px] w-full flex flex-col gap-lg grow">
+        <div className="py-xl rounded-lg flex flex-col gap-lg grow items-stretch w-full">
+          <Link
+            href="/"
+            className="text-grey inline-flex gap-sm items-center w-full bg-white p-sm rounded-lg drop-shadow-xl"
+          >
+            <Icon icon="IconChevronLeft" />
+            <span>Home</span>
+          </Link>
+          <Typography />
+          <Buttons />
+          <FormFields />
+          <Avatars />
+          <Toasts />
+          <Dialogs />
+        </div>
       </div>
-      <Typography />
-      <Buttons />
-      <FormFields />
-      <Avatars />
-      <Toasts />
-      <Dialogs />
-    </Container>
+    </div>
   );
 }
