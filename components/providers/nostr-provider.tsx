@@ -44,10 +44,7 @@ interface NostrSuccessResult extends NostrContextResult {
   error: null;
 }
 
-type NostrProviderType =
-  | NostrPending
-  | NostrErrorResult
-  | NostrSuccessResult;
+type NostrProviderType = NostrPending | NostrErrorResult | NostrSuccessResult;
 
 export const NostrContext = createContext<NostrProviderType | null>(null);
 
@@ -84,12 +81,14 @@ export function NostrProvider({ children }: { children: React.ReactNode }) {
 
   return (
     <NostrContext.Provider
-      value={{
-        user: data?.user,
-        ndk: data?.ndk,
-        isLoading,
-        error,
-      } as NostrProviderType}
+      value={
+        {
+          user: data?.user,
+          ndk: data?.ndk,
+          isLoading,
+          error,
+        } as NostrProviderType
+      }
     >
       {children}
     </NostrContext.Provider>
@@ -102,8 +101,8 @@ export function NostrProvider({ children }: { children: React.ReactNode }) {
 export function useNDKContext(): NostrProviderType {
   const res = use(NostrContext);
 
-  if(res === null) {
-    throw new Error("useNDKContext must be used within a NostrProvider")  
+  if (res === null) {
+    throw new Error("useNDKContext must be used within a NostrProvider");
   }
 
   return res;
@@ -114,7 +113,7 @@ export function useNDKContext(): NostrProviderType {
  */
 export function useNDK(): NDK {
   const res = useNDKContext();
-  
+
   if (typeof res.ndk === "undefined") {
     throw new Error("Nostr provider is not connected");
   }

@@ -89,6 +89,7 @@ const DialogOverlay = React.forwardRef<
     {...props}
   />
 ));
+DialogOverlay.displayName = "DialogOverlay";
 
 const contentVariants = cva(
   "relative flex flex-col p-[32px] rounded-[20px] w-[90vw] bg-white overflow-hidden sm:p-[24px] sm:w-full sm:h-full sm:rounded-none sm:!max-w-none xs:p-[16px] animate-contentShow",
@@ -119,6 +120,7 @@ const DialogContent = React.forwardRef<
     {children}
   </RadixDialog.Content>
 ));
+DialogContent.displayName = "DialogContent";
 
 const DialogHeader = ({
   className,
@@ -126,6 +128,7 @@ const DialogHeader = ({
 }: React.HTMLAttributes<HTMLDivElement>) => (
   <div className={cn("sm:text-center", className)} {...props} />
 );
+DialogHeader.displayName = "DialogHeader";
 
 const DialogTitle = React.forwardRef<
   React.ElementRef<typeof RadixDialog.Title>,
@@ -133,6 +136,7 @@ const DialogTitle = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <RadixDialog.Title ref={ref} className={cn("mb-lg", className)} {...props} />
 ));
+DialogTitle.displayName = "DialogTitle";
 
 const DialogDescription = React.forwardRef<
   React.ElementRef<typeof RadixDialog.Description>,
@@ -144,3 +148,4 @@ const DialogDescription = React.forwardRef<
     {...props}
   />
 ));
+DialogDescription.displayName = "DialogDescription";

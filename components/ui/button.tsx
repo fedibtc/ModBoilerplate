@@ -149,6 +149,7 @@ const Button = React.forwardRef<HTMLButtonElement, Props>(
     }
   },
 );
+Button.displayName = "Button";
 
 const ButtonContent = styled(
   "div",

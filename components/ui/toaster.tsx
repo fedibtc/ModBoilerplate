@@ -57,6 +57,7 @@ const ToastViewport = forwardRef<
     {...props}
   />
 ));
+ToastViewport.displayName = "ToastViewport";
 
 export const toastVariants = cva(
   `group max-w-[320px] pointer-events-auto relative flex w-full items-center justify-between space-x-4 overflow-hidden rounded-[20px] border border-lightGrey p-20 shadow-[0_4px_24px_0_rgba(0,0,0,0.1)] bg-holo-400 transition-all data-[swipe=cancel]:translate-x-0 data-[swipe=cancel]:translate-y-0 data-[swipe=end]:min-sm:translate-x-[var(--radix-toast-swipe-end-x)] data-[swipe=end]:sm:translate-y-[var(--radix-toast-swipe-end-y)] data-[swipe=move]:min-sm:translate-x-[var(--radix-toast-swipe-move-x)] data-[swipe=move]:sm:translate-y-[var(--radix-toast-swipe-move-y)] data-[swipe=move]:transition-none data-[swipe=end]:animate-out data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-80 data-[state=closed]:min-sm:slide-out-to-right-full data-[state=closed]:sm:slide-out-to-top-full data-[state=open]:min-sm:slide-in-from-right-full data-[state=open]:sm:slide-in-from-top-full`,
@@ -86,6 +87,7 @@ const Toast = forwardRef<
     />
   );
 });
+Toast.displayName = "Toast";
 
 const ToastContent = forwardRef<
   React.ElementRef<typeof RadixToast.Description>,
@@ -97,3 +99,4 @@ const ToastContent = forwardRef<
     {...props}
   />
 ));
+ToastContent.displayName = "ToastContent";

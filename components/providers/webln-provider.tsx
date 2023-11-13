@@ -36,7 +36,7 @@ interface WebLNSuccessResult extends WebLNContextResult {
 export type WebLNProviderType =
   | WebLNPending
   | WebLNErrorResult
-  | WebLNSuccessResult
+  | WebLNSuccessResult;
 
 export const WebLNContext = createContext<WebLNProviderType | null>(null);
 
@@ -62,11 +62,13 @@ export function WebLNProvider({ children }: { children: React.ReactNode }) {
 
   return (
     <WebLNContext.Provider
-      value={{
-        webln,
-        isLoading,
-        error,
-      } as WebLNProviderType}
+      value={
+        {
+          webln,
+          isLoading,
+          error,
+        } as WebLNProviderType
+      }
     >
       {children}
     </WebLNContext.Provider>
