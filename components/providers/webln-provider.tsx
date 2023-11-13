@@ -1,9 +1,9 @@
 "use client";
 import { useQuery } from "@tanstack/react-query";
-import { createContext, useContext } from "react";
+import { createContext, use } from "react";
 import { WebLNProvider } from "webln";
 
-export interface WebLNProviderType {
+export interface WebLNContextResult {
   webln: WebLNProvider | undefined;
   /**
    * Whether the webln connection is loading
@@ -14,6 +14,29 @@ export interface WebLNProviderType {
    */
   error: Error | null;
 }
+
+interface WebLNPending extends WebLNContextResult {
+  webln: undefined;
+  isLoading: true;
+  error: null;
+}
+
+interface WebLNErrorResult extends WebLNContextResult {
+  webln: undefined;
+  isLoading: false;
+  error: Error;
+}
+
+interface WebLNSuccessResult extends WebLNContextResult {
+  webln: WebLNProvider;
+  isLoading: false;
+  error: null;
+}
+
+export type WebLNProviderType =
+  | WebLNPending
+  | WebLNErrorResult
+  | WebLNSuccessResult
 
 export const WebLNContext = createContext<WebLNProviderType | null>(null);
 
@@ -43,7 +66,7 @@ export function WebLNProvider({ children }: { children: React.ReactNode }) {
         webln,
         isLoading,
         error,
-      }}
+      } as WebLNProviderType}
     >
       {children}
     </WebLNContext.Provider>
@@ -51,31 +74,27 @@ export function WebLNProvider({ children }: { children: React.ReactNode }) {
 }
 
 /**
- * Returns a `WebLNProvider` instance. Throws an error if not used in a WebLNProvider or if not initialized.
- */
-export function useWebLN(): WebLNProvider {
-  const res = useContext(WebLNContext);
-
-  if (res === null) {
-    throw new Error("useWebLN must be used within a WebLNProvider");
-  }
-
-  if (typeof res.webln === "undefined") {
-    throw new Error("WebLN provider is not connected");
-  }
-
-  return res.webln;
-}
-
-/**
  * Returnes the value of `WebLNContext`. Throws an error if not used within a WebLNProvider.
  */
 export function useWebLNContext(): WebLNProviderType {
-  const res = useContext(WebLNContext);
+  const res = use(WebLNContext);
 
   if (res === null) {
     throw new Error("useWebLNContext must be used within a WebLNProvider");
   }
 
   return res;
+}
+
+/**
+ * Returns a `WebLNProvider` instance. Throws an error if not used in a WebLNProvider or if not initialized.
+ */
+export function useWebLN(): WebLNProvider {
+  const res = useWebLNContext();
+
+  if (typeof res.webln === "undefined") {
+    throw new Error("WebLN provider is not connected");
+  }
+
+  return res.webln;
 }

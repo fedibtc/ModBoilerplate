@@ -35,9 +35,9 @@ function WebLNExample() {
   const [scanning, setScanning] = useState(false);
 
   const webln = useWebLN();
-
   const { toast } = useToast();
 
+  // Create an invoice with the given amount, and optionally memo
   const submitCreateInvoice = async (e: FormEvent) => {
     e.preventDefault();
 
@@ -55,25 +55,7 @@ function WebLNExample() {
     }
   };
 
-  const submitPayInvoice = async (e: FormEvent) => {
-    e.preventDefault();
-
-    if (payInvoiceString) {
-      try {
-        await webln.sendPayment(payInvoiceString);
-        setPInvoiceOpen(false);
-        toast({
-          content: "Payment Successful",
-        });
-      } catch (err) {
-        console.log(err);
-        toast({
-          content: (err as any).message,
-        });
-      }
-    }
-  };
-
+  // Share the created invoice with `navigator.share`. Available on mobile devices.
   const shareInvoice = async () => {
     if (createdInvoice) {
       try {
@@ -89,12 +71,33 @@ function WebLNExample() {
     }
   };
 
+  // Copy the created lightning invoice to clipboard
   const copyInvoice = async () => {
     if (createdInvoice) {
       try {
         await navigator.clipboard.writeText("lightning:" + createdInvoice);
         toast({
           content: "Copied to clipboard",
+        });
+      } catch (err) {
+        console.log(err);
+        toast({
+          content: (err as any).message,
+        });
+      }
+    }
+  };
+
+  // Pay an invoice with the given payment request
+  const submitPayInvoice = async (e: FormEvent) => {
+    e.preventDefault();
+
+    if (payInvoiceString) {
+      try {
+        await webln.sendPayment(payInvoiceString);
+        setPInvoiceOpen(false);
+        toast({
+          content: "Payment Successful",
         });
       } catch (err) {
         console.log(err);

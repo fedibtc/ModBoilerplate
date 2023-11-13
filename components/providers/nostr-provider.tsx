@@ -4,7 +4,7 @@ import NDK, { NDKNip07Signer, NDKUser } from "@nostr-dev-kit/ndk";
 import { useQuery } from "@tanstack/react-query";
 import { createContext, use } from "react";
 
-export interface NostrProviderType {
+export interface NostrContextResult {
   /**
    * A connected instance of the Nostr Dev Kit class
    */
@@ -22,6 +22,32 @@ export interface NostrProviderType {
    */
   error: Error | null;
 }
+
+interface NostrPending extends NostrContextResult {
+  ndk: undefined;
+  user: undefined;
+  isLoading: true;
+  error: null;
+}
+
+interface NostrErrorResult extends NostrContextResult {
+  ndk: undefined;
+  user: undefined;
+  isLoading: false;
+  error: Error;
+}
+
+interface NostrSuccessResult extends NostrContextResult {
+  ndk: NDK;
+  user: NDKUser;
+  isLoading: false;
+  error: null;
+}
+
+type NostrProviderType =
+  | NostrPending
+  | NostrErrorResult
+  | NostrSuccessResult;
 
 export const NostrContext = createContext<NostrProviderType | null>(null);
 
@@ -63,7 +89,7 @@ export function NostrProvider({ children }: { children: React.ReactNode }) {
         ndk: data?.ndk,
         isLoading,
         error,
-      }}
+      } as NostrProviderType}
     >
       {children}
     </NostrContext.Provider>
@@ -71,15 +97,24 @@ export function NostrProvider({ children }: { children: React.ReactNode }) {
 }
 
 /**
+ * Returnes the value of `NostrContext`. Throws an error if not used within a NostrProvider.
+ */
+export function useNDKContext(): NostrProviderType {
+  const res = use(NostrContext);
+
+  if(res === null) {
+    throw new Error("useNDKContext must be used within a NostrProvider")  
+  }
+
+  return res;
+}
+
+/**
  * Returns a Nostr NDK instance. Throws an error if not used in a NostrProvider or if not initialized.
  */
 export function useNDK(): NDK {
-  const res = use(NostrContext);
-
-  if (res === null) {
-    throw new Error("useNostrNDK() Must be used within a NostrProvider");
-  }
-
+  const res = useNDKContext();
+  
   if (typeof res.ndk === "undefined") {
     throw new Error("Nostr provider is not connected");
   }
@@ -91,11 +126,7 @@ export function useNDK(): NDK {
  * Returns an NDKUser instance representing the current user over `window.nostr`. Throws an error if not used in a NostrProvider or if not initialized.
  */
 export function useNDKUser(): NDKUser {
-  const res = use(NostrContext);
-
-  if (res === null) {
-    throw new Error("useNostrUser() Must be used within a NostrProvider");
-  }
+  const res = useNDKContext();
 
   if (typeof res.user === "undefined") {
     throw new Error("Nostr provider is not connected");
