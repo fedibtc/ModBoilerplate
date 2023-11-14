@@ -110,7 +110,7 @@ const contentVariants = cva(
 const DialogContent = React.forwardRef<
   React.ElementRef<typeof RadixDialog.Content>,
   React.ComponentPropsWithoutRef<typeof RadixDialog.Content> &
-    VariantProps<typeof contentVariants>
+  VariantProps<typeof contentVariants>
 >(({ className, children, size, ...props }, ref) => (
   <RadixDialog.Content
     ref={ref}
@@ -126,7 +126,7 @@ const DialogHeader = ({
   className,
   ...props
 }: React.HTMLAttributes<HTMLDivElement>) => (
-  <div className={cn("sm:text-center", className)} {...props} />
+  <div className={cn("sm:text-center flex flex-col gap-sm", className)} {...props} />
 );
 DialogHeader.displayName = "DialogHeader";
 
@@ -134,7 +134,7 @@ const DialogTitle = React.forwardRef<
   React.ElementRef<typeof RadixDialog.Title>,
   React.ComponentPropsWithoutRef<typeof RadixDialog.Title>
 >(({ className, ...props }, ref) => (
-  <RadixDialog.Title ref={ref} className={cn("mb-lg", className)} {...props} />
+  <RadixDialog.Title ref={ref} className={className} {...props} />
 ));
 DialogTitle.displayName = "DialogTitle";
 
