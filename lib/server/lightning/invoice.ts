@@ -1,5 +1,5 @@
 import { invoiceVerificationTimeout } from "@/lib/constants";
-import client from "@/lib/server/redis";
+import prisma from "@/lib/server/prisma";
 import { ZodSchema, z } from "zod";
 
 const { ALBY_ACCESS_TOKEN } = process.env;
@@ -8,11 +8,11 @@ if (!ALBY_ACCESS_TOKEN) {
   throw new Error("Missing environment variable ALBY_ACCESS_TOKEN");
 }
 
-export interface InvoiceUtilityArgs {
+export interface InvoiceUtilityArgs<Sch extends ZodSchema> {
   /**
    * A Zod Schema for registering and verifying invoices
    */
-  schema: ZodSchema;
+  schema: Sch;
   /**
    * Whether to securely create, remember, and verify one-time-use invoices
    */
@@ -22,11 +22,11 @@ export interface InvoiceUtilityArgs {
 /**
  * Lightning Invoice Utility for creating and verifying invoices.
  */
-export default class InvoiceUtility {
-  private schema: ZodSchema;
-  private rememberInvoices: boolean;
+export default class InvoiceUtility<Sch extends ZodSchema> {
+  public schema: Sch;
+  public rememberInvoices: boolean;
 
-  constructor({ schema, rememberInvoices = false }: InvoiceUtilityArgs) {
+  constructor({ schema, rememberInvoices = false }: InvoiceUtilityArgs<Sch>) {
     this.schema = schema;
     this.rememberInvoices = rememberInvoices;
   }
@@ -101,18 +101,20 @@ export default class InvoiceUtility {
   /**
    * Store a server-generated invoice payment hash to the Redis database for future verification
    */
-  public async registerInvoiceHash(payment_hash: string) {
-    return await client.set(payment_hash, new Date().toDateString());
+  public async registerInvoiceHash(paymentHash: string) {
+    return await prisma?.invoice.create({
+      data: { paymentHash },
+    });
   }
 
   /**
    * Verify (and delete) a server-generated invoice payment hash from the Redis database
    */
   public async verifyInvoiceHash(payment_hash: string): Promise<true> {
-    const trackedInvoice = (await client.get(payment_hash)) as
-      | string
-      | undefined
-      | null;
+    const invoice = await prisma?.invoice.findFirst({
+      where: { paymentHash: payment_hash },
+    });
+    const trackedInvoice = invoice?.timeCreated;
 
     if (!trackedInvoice) {
       throw new Error("Could not find invoice");
@@ -123,13 +125,17 @@ export default class InvoiceUtility {
       Date.now() - new Date(trackedInvoice).getTime() <=
         invoiceVerificationTimeout
     ) {
-      await client.del(payment_hash);
+      await prisma?.invoice.delete({
+        where: { paymentHash: payment_hash },
+      });
       return true;
     } else if (
       Date.now() - new Date(trackedInvoice).getTime() >
       invoiceVerificationTimeout
     ) {
-      await client.del(payment_hash);
+      await prisma?.invoice.delete({
+        where: { paymentHash: payment_hash },
+      });
       throw new Error("Invoice timed out");
     }
 
@@ -141,7 +147,7 @@ export default class InvoiceUtility {
    */
   public async registerInvoiceWithSchema(
     args: Omit<CreateInvoiceArgs, "description" | "memo">,
-    data: z.infer<InvoiceUtility["schema"]>,
+    data: z.infer<Sch>,
   ): Promise<CreateInvoiceResponse> {
     try {
       const parserResponse = this.schema.safeParse(data);
@@ -171,7 +177,7 @@ export default class InvoiceUtility {
    */
   public async verifyInvoiceWithSchema(bolt11_invoice: string): Promise<{
     invoice: DecodeInvoiceResponse;
-    data: z.infer<InvoiceUtility["schema"]>;
+    data: z.infer<Sch>;
   }> {
     try {
       const res = await this.decodeInvoice(bolt11_invoice);

@@ -1,0 +1,45 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("POSTGRES_PRISMA_URL") // uses connection pooling
+  directUrl = env("POSTGRES_URL_NON_POOLING") // uses a direct connection
+}
+
+model Conversation {
+  id          Int       @id @default(autoincrement())
+  pubkey      String
+  title       String
+  timeCreated DateTime  @default(now())
+  messages    Message[]
+}
+
+model Message {
+  id             Int          @id @default(autoincrement())
+  content        String
+  conversationID Int
+  role           Role         @default(USER)
+  conversation   Conversation @relation(fields: [conversationID], references: [id])
+}
+
+enum Role {
+  SYSTEM
+  USER
+}
+
+model Invoice {
+  id           Int      @id @default(autoincrement())
+  paymentHash  String   @unique
+  timeCreated  DateTime @default(now())
+}
+
+model Balance {
+  id          Int     @id @default(autoincrement())
+  pubkey      String
+  balance     Int 
+}

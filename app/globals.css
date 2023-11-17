@@ -47,7 +47,7 @@
     box-sizing: border-box;
   }
   html, body {
-    @apply h-full text-primary;
+    @apply h-screen text-primary;
     font-family: "Albert Sans", sans-serif;
     overscroll-behavior: none;
   }
