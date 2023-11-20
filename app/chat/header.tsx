@@ -1,21 +1,23 @@
 import { useAppState } from "@/components/providers/app-state-provider";
 import Icon from "@/components/ui/icon";
 import { Text } from "@/components/ui/text";
+import { mutateWithBody } from "@/lib/rest";
 import { useMutation } from "@tanstack/react-query";
 
 export default function Header() {
-  const { conversation, setConversation } = useAppState();
+  const { conversation, setConversation, balance } = useAppState();
 
   const { mutate, isPending } = useMutation({
-    mutationFn: async () => {
-      return new Promise((resolve, reject) => {
-        setTimeout(() => {
-          resolve(0);
-        }, 1000);
-      });
-    },
+    mutationFn: () =>
+      mutateWithBody<void>(
+        "/chat",
+        {
+          conversationId: conversation!.id,
+        },
+        "DELETE"
+      ),
     onSuccess: () => {
-      // TODO: navigate to conversation list
+      setConversation(null);
     },
     onError: () => {
       alert("Failed to delete conversation");
@@ -40,7 +42,10 @@ export default function Header() {
       >
         <Icon icon="IconChevronLeft" />
       </button>
-      <Text className="grow">{conversation!.title}</Text>
+      <Text className="grow" variant="caption" ellipsize>{conversation!.title}</Text>
+      <Text className="text-grey shrink-0" variant="caption" ellipsize>
+        {balance?.balance} Sats
+      </Text>
       <button
         className="w-6 h-6 shrink-0 flex items-center justify-center text-grey"
         onClick={deleteConversation}

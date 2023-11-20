@@ -10,7 +10,7 @@ import { Text } from "@/components/ui/text";
 import { queryGet } from "@/lib/rest";
 import { useChat } from "ai/react";
 import { Message as AIMessage } from "ai";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 
 function Message({
   message,
@@ -28,24 +28,12 @@ function Message({
       } items-end gap-sm`}
     >
       {isSystem && (
-        <Avatar
-          id={String(message.id)}
-          name="system"
-          size="sm"
-          className="shrink-0"
-        />
+        <Avatar id="1" name="system" size="sm" className="shrink-0" />
       )}
       <div className="flex flex-col gap-xs">
         <div className="flex">
           {isSystem && (
-            <Text
-              variant="caption"
-              className={
-                loading
-                  ? "text-transparent bg-green/10 rounded-md animate-pulse text-left"
-                  : ""
-              }
-            >
+            <Text variant="caption" className={loading ? "transparent" : ""}>
               system
             </Text>
           )}
@@ -68,19 +56,26 @@ function Message({
 }
 
 function ConversationChat({ convo }: { convo: ConversationWithMessages }) {
-  const { messages, input, handleInputChange, handleSubmit } = useChat({
-    initialMessages: convo.messages.map((x) => ({
-      id: String(x.id),
-      content: x.content,
-      role: x.role === "SYSTEM" ? "system" : "user",
-    })) as Array<AIMessage>,
-    body: {
-      model: "gpt-3.5-turbo-1106",
-    },
-  });
+  const { refetchBalance } = useAppState();
+  const { messages, input, handleInputChange, handleSubmit, isLoading } =
+    useChat({
+      initialMessages: convo.messages.map((x) => ({
+        id: String(x.id),
+        content: x.content,
+        role: x.role === "SYSTEM" ? "system" : "user",
+      })) as Array<AIMessage>,
+      body: {
+        conversationId: convo.id,
+      },
+      onFinish: () => {
+        refetchBalance();
+      },
+    });
+
+  const scrollRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    console.log(messages);
+    scrollRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
   return (
@@ -90,6 +85,17 @@ function ConversationChat({ convo }: { convo: ConversationWithMessages }) {
           {messages.map((m, i) => (
             <Message message={m} key={i} />
           ))}
+          {isLoading && (
+            <Message
+              message={{
+                content: "...",
+                role: "system",
+                id: "1",
+              }}
+              loading
+            />
+          )}
+          <div ref={scrollRef} />
         </div>
       </div>
       <form onSubmit={handleSubmit}>
@@ -97,6 +103,7 @@ function ConversationChat({ convo }: { convo: ConversationWithMessages }) {
           value={input}
           onChange={handleInputChange}
           placeholder="Send a message..."
+          autoFocus
         />
       </form>
     </div>
@@ -111,9 +118,11 @@ export default function Conversation() {
     isLoading,
     error,
   } = useQuery({
-    queryKey: ["loadConversation"],
+    queryKey: ["loadConversation", conversation],
     queryFn: () =>
-      queryGet<ConversationWithMessages>("/api/conversations?id=" + conversation!.id),
+      queryGet<ConversationWithMessages>(
+        "/api/conversations?id=" + conversation!.id
+      ),
   });
 
   return (

@@ -13,8 +13,9 @@ import { mutateWithBody, queryGet } from "@/lib/rest";
 import { CreateInvoiceResponse } from "@/lib/server/lightning/invoice";
 import { Conversation } from "@prisma/client";
 import { useMutation, useQuery } from "@tanstack/react-query";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import ChatInput from "./input";
+import { useToast } from "@/components/ui/hooks/use-toast";
 
 export default function EmptyState() {
   const [value, setValue] = useState("");
@@ -25,6 +26,8 @@ export default function EmptyState() {
   const { balance, refetchBalance, setConversation } = useAppState();
 
   const webln = useWebLN();
+
+  const { toast } = useToast();
 
   const {
     mutate: updateBalance,
@@ -75,6 +78,11 @@ export default function EmptyState() {
       onSuccess: (data) => {
         setConversation(data);
       },
+      onError: (err) => {
+        toast({
+          content: err.message,
+        });
+      },
     });
 
   const { data: conversations, isLoading } = useQuery({
@@ -83,6 +91,10 @@ export default function EmptyState() {
   });
 
   const unifiedError = error || bError;
+
+  useEffect(() => {
+    refetchBalance();
+  }, []);
 
   return (
     <>
