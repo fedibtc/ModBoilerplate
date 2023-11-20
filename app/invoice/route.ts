@@ -1,17 +1,6 @@
-import InvoiceUtility from "@/lib/server/lightning/invoice";
 import prisma from "@/lib/server/prisma";
 import { cookies } from "next/headers";
-import { z } from "zod";
-
-export const schema = z.object({
-  amount: z.number().positive(),
-  npub: z.string(),
-});
-
-export const invoiceUtil = new InvoiceUtility({
-  schema,
-  rememberInvoices: true,
-});
+import { invoiceUtil } from "./utils";
 
 export async function POST(req: Request) {
   const npub = cookies().get("npub");

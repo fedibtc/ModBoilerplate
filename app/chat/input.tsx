@@ -3,26 +3,22 @@ import { Dispatch, SetStateAction } from "react";
 
 export default function ChatInput({
   onSubmit,
-  value,
-  setValue,
-  loading,
+  loading = false,
+  ...props
 }: {
-  onSubmit: () => void;
-  value: string;
-  setValue: Dispatch<SetStateAction<string>>;
-  loading: boolean;
-}) {
+  onSubmit?: () => void;
+  loading?: boolean;
+} & Omit<React.InputHTMLAttributes<HTMLInputElement>, 'className'>) {
   return (
     <div className="flex focus-within:!border-blue items-center px-md">
       <input
-        value={value}
-        onChange={(e) => setValue(e.target.value)}
-        placeholder="Send a message..."
         className="border-none py-lg text-base w-full outline-none disabled:opacity-50"
         disabled={loading}
+        {...props}
       />
       <button
-        onClick={() => onSubmit()}
+        onClick={typeof onSubmit !== "undefined" ? () => onSubmit() : undefined}
+        type={typeof onSubmit !== "undefined" ? "button" : "submit"}
         disabled={loading}
         className="bg-blue rounded-full w-8 h-8 p-1 flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed shrink-0"
       >

@@ -1,63 +1,188 @@
-import { useAppState } from "@/components/providers/app-state-provider";
-import { useToast } from "@/components/ui/hooks/use-toast";
-import { useMutation } from "@tanstack/react-query";
-import { Message } from "ai";
-import { useChat } from "ai/react";
-import { useState } from "react";
+import {
+  ConversationWithMessages,
+  useAppState,
+} from "@/components/providers/app-state-provider";
+import { useQuery } from "@tanstack/react-query";
 import Header from "./header";
 import ChatInput from "./input";
-import Messages from "./messages";
+import { Avatar } from "@/components/ui/avatar";
+import { Text } from "@/components/ui/text";
+import { queryGet } from "@/lib/rest";
+import { useChat } from "ai/react";
+import { Message as AIMessage } from "ai";
+import { useEffect } from "react";
 
-function Input() {
-  const [value, setValue] = useState("");
+function Message({
+  message,
+  loading = false,
+}: {
+  message: AIMessage;
+  loading?: boolean;
+}) {
+  const isSystem = message.role !== "user";
 
-  const { toast } = useToast();
+  return (
+    <div
+      className={`flex ${
+        isSystem ? "flex-row" : "flex-row-reverse"
+      } items-end gap-sm`}
+    >
+      {isSystem && (
+        <Avatar
+          id={String(message.id)}
+          name="system"
+          size="sm"
+          className="shrink-0"
+        />
+      )}
+      <div className="flex flex-col gap-xs">
+        <div className="flex">
+          {isSystem && (
+            <Text
+              variant="caption"
+              className={
+                loading
+                  ? "text-transparent bg-green/10 rounded-md animate-pulse text-left"
+                  : ""
+              }
+            >
+              system
+            </Text>
+          )}
+        </div>
+        <div
+          className={`p-2 rounded-xl ${
+            isSystem ? "bg-green/10 rounded-bl-md" : "bg-blue/10 rounded-br-md"
+          } ${loading ? "animate-pulse" : ""}`}
+        >
+          <Text
+            variant="body"
+            className={loading ? `${loading ? "text-transparent" : ""}` : ""}
+          >
+            {message.content}
+          </Text>
+        </div>
+      </div>
+    </div>
+  );
+}
 
-  const { mutate, isPending } = useMutation({
-    mutationFn: async () => {
-      return new Promise((resolve, reject) => {
-        setTimeout(() => {
-          resolve(0);
-        }, 1000);
-      });
-    },
-    onError: (error) => {
-      toast({
-        content: error.message,
-      });
+function ConversationChat({ convo }: { convo: ConversationWithMessages }) {
+  const { messages, input, handleInputChange, handleSubmit } = useChat({
+    initialMessages: convo.messages.map((x) => ({
+      id: String(x.id),
+      content: x.content,
+      role: x.role === "SYSTEM" ? "system" : "user",
+    })) as Array<AIMessage>,
+    body: {
+      model: "gpt-3.5-turbo-1106",
     },
   });
 
+  useEffect(() => {
+    console.log(messages);
+  }, [messages]);
+
   return (
-    <ChatInput
-      value={value}
-      setValue={setValue}
-      loading={isPending}
-      onSubmit={() => mutate()}
-    />
+    <div className="flex flex-col grow divide-y divide-extraLightGrey">
+      <div className="grow relative">
+        <div className="absolute inset-0 flex flex-col gap-md overflow-auto px-md py-sm">
+          {messages.map((m, i) => (
+            <Message message={m} key={i} />
+          ))}
+        </div>
+      </div>
+      <form onSubmit={handleSubmit}>
+        <ChatInput
+          value={input}
+          onChange={handleInputChange}
+          placeholder="Send a message..."
+        />
+      </form>
+    </div>
   );
 }
 
 export default function Conversation() {
   const { conversation } = useAppState();
 
-  const initialMessages: Array<Message> = (conversation?.messages ?? []).map(
-    (x, id) => ({
-      content: x.content,
-      role: x.role === "SYSTEM" ? "assistant" : "user",
-      id: String(id),
-    }),
-  );
-
-  const { messages, input, handleInputChange, handleSubmit } = useChat({
-    initialMessages,
+  const {
+    data: convo,
+    isLoading,
+    error,
+  } = useQuery({
+    queryKey: ["loadConversation"],
+    queryFn: () =>
+      queryGet<ConversationWithMessages>("/api/conversations?id=" + conversation!.id),
   });
 
   return (
-    <>
+    <div className="flex flex-col divide-y divide-extraLightGrey grow">
       <Header />
-      <Messages />
-      <Input />
-    </>
+      {isLoading ? (
+        <div className="grow relative">
+          <div className="absolute inset-0 flex flex-col gap-md overflow-auto px-md py-sm">
+            <Message
+              message={{
+                id: "1",
+                content: "Lorem Ipsum",
+                role: "user",
+              }}
+              loading
+            />
+            <Message
+              message={{
+                id: "2",
+                content:
+                  "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua",
+                role: "system",
+              }}
+              loading
+            />
+            <Message
+              message={{
+                id: "3",
+                content: "Lorem ipsum dolor sit amet, consectetur",
+                role: "user",
+              }}
+              loading
+            />
+            <Message
+              message={{
+                id: "4",
+                content: "Sed ut perspiciatis unde omnis iste natus error",
+                role: "system",
+              }}
+              loading
+            />
+            <Message
+              message={{
+                id: "5",
+                content: "Consectetur adipiscing elit",
+                role: "user",
+              }}
+              loading
+            />
+            <Message
+              message={{
+                id: "4",
+                content: "Quis autem vel eum",
+                role: "system",
+              }}
+              loading
+            />
+          </div>
+        </div>
+      ) : error ? (
+        <div className="grow flex flex-col justify-center items-center">
+          <Text variant="h2" weight="bolder">
+            An Error Occurred
+          </Text>
+          <Text>{error.message}</Text>
+        </div>
+      ) : (
+        <ConversationChat convo={convo!} />
+      )}
+    </div>
   );
 }

@@ -9,8 +9,8 @@ export type ConversationWithMessages = Conversation & {
 
 interface AppState {
   balance?: Balance | null;
-  conversation?: ConversationWithMessages | null;
-  setConversation: Dispatch<SetStateAction<ConversationWithMessages | null>>;
+  conversation?: Conversation | null;
+  setConversation: Dispatch<SetStateAction<Conversation | null>>;
   refetchBalance: () => void;
 }
 
@@ -37,7 +37,7 @@ export const AppStateProvider = ({
   });
 
   const [conversation, setConversation] =
-    useState<ConversationWithMessages | null>(null);
+    useState<Conversation | null>(null);
 
   return (
     <AppStateContext.Provider

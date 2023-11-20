@@ -107,19 +107,24 @@ export default function EmptyState() {
               </Button>
             </div>
           </div>
-          <div className="flex flex-col gap-sm">
+          <div className="flex flex-col gap-sm grow">
             <Text weight="medium" className="text-grey">
               Jump back in
             </Text>
-            {conversations?.map((c, i) => (
-              <div
-                key={i}
-                className="p-sm rounded-md cursor-pointer flex gap-2 border border-extralightGrey items-center"
-              >
-                <Icon icon="IconMessage" className="shrink-0 text-grey" />
-                <Text ellipsize>{c.title}</Text>
+            <div className="grow relative">
+              <div className="inset-0 absolute flex flex-col gap-sm overflow-auto">
+                {conversations?.map((c, i) => (
+                  <div
+                    key={i}
+                    className="p-sm rounded-md cursor-pointer flex gap-2 border border-extralightGrey items-center"
+                    onClick={() => setConversation(c)}
+                  >
+                    <Icon icon="IconMessage" className="shrink-0 text-grey" />
+                    <Text ellipsize>{c.title}</Text>
+                  </div>
+                ))}
               </div>
-            ))}
+            </div>
           </div>
         </div>
       ) : (
@@ -136,7 +141,12 @@ export default function EmptyState() {
       {(balance?.balance ?? 0) > 0 ? (
         <ChatInput
           value={value}
-          setValue={setValue}
+          placeholder={
+            conversations?.length === 0
+              ? "Send a message..."
+              : "Start a conversation..."
+          }
+          onChange={(e) => setValue(e.target.value)}
           loading={createConversationLoading}
           onSubmit={() => createConversation(value)}
         />

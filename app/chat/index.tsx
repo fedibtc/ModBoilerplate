@@ -3,7 +3,7 @@ import Conversation from "./conversation";
 import EmptyState from "./empty";
 
 export default function Chat() {
-  const { balance, conversation, setConversation } = useAppState();
+  const { conversation } = useAppState();
 
   return conversation ? <Conversation /> : <EmptyState />;
 }
