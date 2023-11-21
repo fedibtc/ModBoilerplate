@@ -5,7 +5,7 @@ import { Dialog } from "@/components/ui/dialog";
 import { DialogStatus } from "@/components/ui/dialog/status";
 import { Input } from "@/components/ui/input";
 import { mutateWithBody } from "@/lib/rest";
-import { CreateInvoiceResponse } from "@/lib/server/lightning/invoice";
+import { CreateInvoiceResponse } from "@/lib/server/lightning/address";
 import { useMutation } from "@tanstack/react-query";
 import { useState } from "react";
 
@@ -51,8 +51,8 @@ export default function TopupDialog() {
       }),
     onSuccess: async (data) => {
       setPaymentPending(true);
-      await webln.sendPayment(data.payment_request);
-      await updateBalance(data.payment_request);
+      await webln.sendPayment(data.pr);
+      await updateBalance(data.pr);
     },
   });
 

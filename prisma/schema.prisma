@@ -35,6 +35,8 @@ enum Role {
 model Invoice {
   id           Int      @id @default(autoincrement())
   paymentHash  String   @unique
+  verifyUrl    String?
+  pubkey       String
   timeCreated  DateTime @default(now())
 }
 

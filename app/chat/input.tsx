@@ -16,14 +16,13 @@ export default function ChatInput({
   return (balance?.balance ?? 0) < minSats ? (
     <div className="flex items-center p-md justify-center">
       <Text className="flex gap-xs text-center">
-        <span>You&apos;re out of sats.</span>
         <a
           className="underline cursor-pointer text-grey hover:text-primary"
           onClick={() => setTopupDialog(true)}
         >
-          top up
+          Top up
         </a>{" "}
-        <span>to continue</span>
+        <span>to start chatting</span>
       </Text>
     </div>
   ) : (

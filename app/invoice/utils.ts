@@ -1,12 +1,5 @@
-import InvoiceUtility from "@/lib/server/lightning/invoice";
-import { z } from "zod";
+import LnAddressUtil from "@/lib/server/lightning/address";
 
-export const schema = z.object({
-  amount: z.number().positive(),
-  npub: z.string(),
-});
-
-export const invoiceUtil = new InvoiceUtility({
-  schema,
+export const lnUtil = new LnAddressUtil({
   rememberInvoices: true,
 });

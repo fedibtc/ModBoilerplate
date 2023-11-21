@@ -103,7 +103,6 @@ function ConversationChat({ convo }: { convo: ConversationWithMessages }) {
           value={input}
           onChange={handleInputChange}
           placeholder="Send a message..."
-          autoFocus
         />
       </form>
     </div>

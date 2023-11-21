@@ -1,6 +1,6 @@
 import { getBalance, requireNpub } from "@/lib/server/auth";
 import prisma from "@/lib/server/prisma";
-import { invoiceUtil } from "./utils";
+import { lnUtil } from "./utils";
 
 export async function POST(req: Request) {
   try {
@@ -15,14 +15,11 @@ export async function POST(req: Request) {
       throw new Error("Amount must be greater than 0");
     }
 
-    const invoice = await invoiceUtil.registerInvoiceWithSchema(
+    const invoice = await lnUtil.registerInvoice(
       {
         amount: body.amount,
       },
-      {
-        amount: body.amount,
-        npub: npub,
-      },
+      npub,
     );
 
     return Response.json({
@@ -46,11 +43,10 @@ export async function PUT(req: Request) {
       throw new Error("No invoice provided");
     }
 
-    const { data } = await invoiceUtil.verifyInvoiceWithSchema(body.invoice);
+    const { invoice } = await lnUtil.verifyInvoice(body.invoice, npub);
 
-    if (data.npub !== npub) {
-      throw new Error("Invoice does not belong to you");
-    }
+    if (!invoice.satoshis || !invoice.paymentRequest)
+      throw new Error("Invalid invoice amount");
 
     const balance = await getBalance();
 
@@ -59,13 +55,16 @@ export async function PUT(req: Request) {
         id: balance.id,
       },
       data: {
-        balance: balance.balance + data.amount,
+        balance: balance.balance + invoice.satoshis,
       },
     });
 
     return Response.json({
       success: true,
-      data,
+      data: {
+        amount: invoice.satoshis,
+        invoice: invoice.paymentRequest,
+      },
     });
   } catch (err) {
     return Response.json({
