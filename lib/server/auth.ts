@@ -1,8 +1,9 @@
 import { Balance } from "@prisma/client";
 import { cookies } from "next/headers";
+import prisma from "./prisma";
 
-export function requireNpub() {
-  const npub = cookies().get("npub");
+export async function requireNpub() {
+  const npub = await cookies().get("npub");
 
   if (!npub?.value) {
     throw new Error("No npub provided");
@@ -11,7 +12,8 @@ export function requireNpub() {
   return npub!.value;
 }
 
-export async function getBalance(npub: string): Promise<Balance> {
+export async function getBalance(): Promise<Balance> {
+  const npub = await requireNpub();
   const data = await prisma?.balance.findFirst({
     where: {
       pubkey: npub,

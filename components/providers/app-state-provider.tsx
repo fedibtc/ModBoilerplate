@@ -12,6 +12,8 @@ interface AppState {
   conversation?: Conversation | null;
   setConversation: Dispatch<SetStateAction<Conversation | null>>;
   refetchBalance: () => void;
+  topupDialog: boolean;
+  setTopupDialog: Dispatch<SetStateAction<boolean>>;
 }
 
 export const AppStateContext = createContext<AppState | null>(null);
@@ -34,10 +36,12 @@ export const AppStateProvider = ({
   const { refetch: refetchBalance, data: balance } = useQuery({
     queryKey: ["balance"],
     queryFn: () => queryGet<Balance>("/balance"),
+    retry: false,
+    staleTime: 0,
   });
 
-  const [conversation, setConversation] =
-    useState<Conversation | null>(null);
+  const [conversation, setConversation] = useState<Conversation | null>(null);
+  const [topupDialog, setTopupDialog] = useState(false);
 
   return (
     <AppStateContext.Provider
@@ -46,6 +50,8 @@ export const AppStateProvider = ({
         refetchBalance,
         conversation,
         setConversation,
+        topupDialog,
+        setTopupDialog,
       }}
     >
       {children}

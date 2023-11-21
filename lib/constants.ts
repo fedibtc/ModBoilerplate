@@ -5,3 +5,5 @@ export const RELAYS = ["wss://relay.snort.social", "wss://nos.lol"];
  * Defaults to an hour.
  */
 export const invoiceVerificationTimeout = 3600000;
+
+export const minSats = 1;

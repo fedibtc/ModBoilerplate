@@ -4,5 +4,4 @@ export const satsForTokens = (tokens: number) => {
 
 export const tokensForSats = (sats: number) => {
   return Math.ceil(sats * 20);
-}
-
+};

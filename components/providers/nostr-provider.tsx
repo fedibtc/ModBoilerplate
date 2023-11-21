@@ -77,6 +77,7 @@ export function NostrProvider({ children }: { children: React.ReactNode }) {
         throw new Error((err as any).message);
       }
     },
+    retry: false,
   });
 
   return (

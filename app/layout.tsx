@@ -4,8 +4,8 @@ import { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Fedi Mod Boilerplate",
-  description: "Edit description",
+  title: "LnGPT ⚡️",
+  description: "Sats for Chats",
   icons: {
     icon: "/favicon.ico",
   },

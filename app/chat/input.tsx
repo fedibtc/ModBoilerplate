@@ -1,5 +1,7 @@
+import { useAppState } from "@/components/providers/app-state-provider";
 import Icon from "@/components/ui/icon";
-import { Dispatch, SetStateAction } from "react";
+import { Text } from "@/components/ui/text";
+import { minSats } from "@/lib/constants";
 
 export default function ChatInput({
   onSubmit,
@@ -8,8 +10,23 @@ export default function ChatInput({
 }: {
   onSubmit?: () => void;
   loading?: boolean;
-} & Omit<React.InputHTMLAttributes<HTMLInputElement>, 'className'>) {
-  return (
+} & Omit<React.InputHTMLAttributes<HTMLInputElement>, "className">) {
+  const { balance, setTopupDialog } = useAppState();
+
+  return (balance?.balance ?? 0) < minSats ? (
+    <div className="flex items-center p-md justify-center">
+      <Text className="flex gap-xs text-center">
+        <span>You&apos;re out of sats.</span>
+        <a
+          className="underline cursor-pointer text-grey hover:text-primary"
+          onClick={() => setTopupDialog(true)}
+        >
+          top up
+        </a>{" "}
+        <span>to continue</span>
+      </Text>
+    </div>
+  ) : (
     <div className="flex focus-within:!border-blue items-center px-md">
       <input
         className="border-none py-lg text-base w-full outline-none disabled:opacity-50"

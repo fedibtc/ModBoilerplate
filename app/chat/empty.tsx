@@ -1,73 +1,26 @@
+"use client";
+
 import {
   ConversationWithMessages,
   useAppState,
 } from "@/components/providers/app-state-provider";
-import { useWebLN } from "@/components/providers/webln-provider";
 import { Button } from "@/components/ui/button";
-import { Dialog } from "@/components/ui/dialog";
-import { DialogStatus } from "@/components/ui/dialog/status";
+import { useToast } from "@/components/ui/hooks/use-toast";
 import Icon from "@/components/ui/icon";
-import { Input } from "@/components/ui/input";
 import { Text } from "@/components/ui/text";
 import { mutateWithBody, queryGet } from "@/lib/rest";
-import { CreateInvoiceResponse } from "@/lib/server/lightning/invoice";
 import { Conversation } from "@prisma/client";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 import ChatInput from "./input";
-import { useToast } from "@/components/ui/hooks/use-toast";
 
 export default function EmptyState() {
   const [value, setValue] = useState("");
-  const [amount, setAmount] = useState(0);
-  const [topupDialog, setTopupDialog] = useState(false);
-  const [paymentPending, setPaymentPending] = useState(false);
 
-  const { balance, refetchBalance, setConversation } = useAppState();
-
-  const webln = useWebLN();
+  const { balance, refetchBalance, setConversation, setTopupDialog } =
+    useAppState();
 
   const { toast } = useToast();
-
-  const {
-    mutate: updateBalance,
-    error: bError,
-    isIdle,
-    reset: resetAwaitInvoiceMutation,
-  } = useMutation({
-    mutationFn: (invoice: string) =>
-      mutateWithBody<{
-        amount: number;
-        invoice: string;
-      }>("/invoice", { invoice }, "PUT"),
-    onSuccess: async () => {
-      await refetchBalance();
-      setPaymentPending(false);
-      setTimeout(() => {
-        resetAwaitInvoiceMutation();
-        resetCreateTopupInvoiceMutation();
-        setAmount(0);
-        setTopupDialog(false);
-      }, 2000);
-    },
-  });
-
-  const {
-    mutate: topup,
-    isPending,
-    error,
-    reset: resetCreateTopupInvoiceMutation,
-  } = useMutation({
-    mutationFn: () =>
-      mutateWithBody<CreateInvoiceResponse>("/invoice", {
-        amount,
-      }),
-    onSuccess: async (data) => {
-      setPaymentPending(true);
-      await webln.sendPayment(data.payment_request);
-      await updateBalance(data.payment_request);
-    },
-  });
 
   const { mutate: createConversation, isPending: createConversationLoading } =
     useMutation({
@@ -88,12 +41,12 @@ export default function EmptyState() {
   const { data: conversations, isLoading } = useQuery({
     queryKey: ["conversations"],
     queryFn: () => queryGet<Array<Conversation>>("/chat"),
+    retry: false,
   });
-
-  const unifiedError = error || bError;
 
   useEffect(() => {
     refetchBalance();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
@@ -150,86 +103,17 @@ export default function EmptyState() {
         </div>
       )}
 
-      {(balance?.balance ?? 0) > 0 ? (
-        <ChatInput
-          value={value}
-          placeholder={
-            conversations?.length === 0
-              ? "Send a message..."
-              : "Start a conversation..."
-          }
-          onChange={(e) => setValue(e.target.value)}
-          loading={createConversationLoading}
-          onSubmit={() => createConversation(value)}
-        />
-      ) : null}
-
-      <Dialog
-        open={topupDialog}
-        onOpenChange={setTopupDialog}
-        title="Topup"
-        description="Enter the amount you want to topup"
-      >
-        <div className="flex flex-col gap-md">
-          <Input
-            value={String(amount)}
-            onChange={(e) => setAmount(Number(e.target.value))}
-            type="number"
-            autoFocus
-          />
-          <div className="flex gap-md w-full overflow-hidden min-w-0 min-h-0">
-            <Button
-              onClick={() => setAmount(amount < 10 ? 10 : amount + 10)}
-              variant="outline"
-              size="sm"
-              className="grow basis-0 w-full"
-            >
-              10
-            </Button>
-            <Button
-              onClick={() => setAmount(amount < 100 ? 100 : amount + 100)}
-              variant="outline"
-              size="sm"
-              className="grow basis-0 w-full"
-            >
-              100
-            </Button>
-            <Button
-              onClick={() => setAmount(amount < 1000 ? 1000 : amount + 1000)}
-              variant="outline"
-              size="sm"
-              className="grow basis-0 w-full"
-            >
-              1000
-            </Button>
-          </div>
-          <Button onClick={() => topup()} loading={isPending}>
-            Submit
-          </Button>
-        </div>
-
-        {isIdle ? null : (
-          <DialogStatus
-            status={
-              unifiedError ? "error" : paymentPending ? "loading" : "success"
-            }
-            title={
-              unifiedError
-                ? unifiedError?.message
-                : paymentPending
-                ? "Loading..."
-                : "Success!"
-            }
-            description={
-              unifiedError
-                ? unifiedError.message
-                : paymentPending
-                ? "Waiting for payment..."
-                : "Successfully topped up your account"
-            }
-          />
-        )}
-      </Dialog>
+      <ChatInput
+        value={value}
+        placeholder={
+          conversations?.length === 0
+            ? "Send a message..."
+            : "Start a conversation..."
+        }
+        onChange={(e) => setValue(e.target.value)}
+        loading={createConversationLoading}
+        onSubmit={() => createConversation(value)}
+      />
     </>
   );
 }

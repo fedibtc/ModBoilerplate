@@ -14,7 +14,7 @@ export default function Header() {
         {
           conversationId: conversation!.id,
         },
-        "DELETE"
+        "DELETE",
       ),
     onSuccess: () => {
       setConversation(null);
@@ -26,7 +26,7 @@ export default function Header() {
 
   const deleteConversation = () => {
     const shouldDelete = confirm(
-      "Are you sure you want to delete this conversation?"
+      "Are you sure you want to delete this conversation?",
     );
 
     if (shouldDelete) {
@@ -42,7 +42,9 @@ export default function Header() {
       >
         <Icon icon="IconChevronLeft" />
       </button>
-      <Text className="grow" variant="caption" ellipsize>{conversation!.title}</Text>
+      <Text className="grow" variant="caption" ellipsize>
+        {conversation!.title}
+      </Text>
       <Text className="text-grey shrink-0" variant="caption" ellipsize>
         {balance?.balance} Sats
       </Text>

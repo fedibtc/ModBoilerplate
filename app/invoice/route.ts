@@ -1,10 +1,10 @@
+import { getBalance, requireNpub } from "@/lib/server/auth";
 import prisma from "@/lib/server/prisma";
 import { invoiceUtil } from "./utils";
-import { requireNpub } from "@/lib/server/auth";
 
 export async function POST(req: Request) {
   try {
-    const npub = requireNpub();
+    const npub = await requireNpub();
     const body = await req.json();
 
     if (!("amount" in body) || typeof body.amount !== "number") {
@@ -22,7 +22,7 @@ export async function POST(req: Request) {
       {
         amount: body.amount,
         npub: npub,
-      }
+      },
     );
 
     return Response.json({
@@ -39,7 +39,7 @@ export async function POST(req: Request) {
 
 export async function PUT(req: Request) {
   try {
-    const npub = requireNpub();
+    const npub = await requireNpub();
     const body = await req.json();
 
     if (!("invoice" in body) || typeof body.invoice !== "string") {
@@ -52,15 +52,7 @@ export async function PUT(req: Request) {
       throw new Error("Invoice does not belong to you");
     }
 
-    const balance = await prisma.balance.findFirst({
-      where: {
-        pubkey: npub,
-      },
-    });
-
-    if (!balance) {
-      throw new Error("Balance not found");
-    }
+    const balance = await getBalance();
 
     await prisma.balance.update({
       where: {

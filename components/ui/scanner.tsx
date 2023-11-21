@@ -59,6 +59,7 @@ export default function Scanner({
         scannerRef.current = null;
       }
     })();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [scanning, ref]);
 
   return (

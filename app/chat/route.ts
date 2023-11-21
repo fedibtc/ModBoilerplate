@@ -1,21 +1,21 @@
-import prisma from "@/lib/server/prisma";
-import { cookies } from "next/headers";
-import { openai } from "../api/chat/openai";
-import { getBalance, requireNpub } from "@/lib/server/auth";
+import { minSats } from "@/lib/constants";
 import { satsForTokens, tokensForSats } from "@/lib/sats";
+import { getBalance, requireNpub } from "@/lib/server/auth";
+import prisma from "@/lib/server/prisma";
+import { openai } from "../api/chat/openai";
 
 export async function POST(req: Request) {
   try {
-    const npub = requireNpub();
+    const npub = await requireNpub();
     const body = await req.json();
 
     if (!("text" in body) || typeof body.text !== "string") {
       throw new Error("No text provided");
     }
 
-    const balance = await getBalance(npub);
+    const balance = await getBalance();
 
-    if (balance.balance < 5) {
+    if (balance.balance < minSats) {
       throw new Error("Insufficient balance");
     }
 
@@ -103,9 +103,9 @@ export async function POST(req: Request) {
   }
 }
 
-export async function GET(req: Request) {
+export async function GET() {
   try {
-    const npub = requireNpub();
+    const npub = await requireNpub();
 
     const conversations = await prisma.conversation.findMany({
       where: {
@@ -127,7 +127,7 @@ export async function GET(req: Request) {
 
 export async function DELETE(req: Request) {
   try {
-    const npub = requireNpub();
+    const npub = await requireNpub();
     const body = await req.json();
 
     if (

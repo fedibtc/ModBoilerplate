@@ -2,15 +2,15 @@ import {
   ConversationWithMessages,
   useAppState,
 } from "@/components/providers/app-state-provider";
-import { useQuery } from "@tanstack/react-query";
-import Header from "./header";
-import ChatInput from "./input";
 import { Avatar } from "@/components/ui/avatar";
 import { Text } from "@/components/ui/text";
 import { queryGet } from "@/lib/rest";
-import { useChat } from "ai/react";
+import { useQuery } from "@tanstack/react-query";
 import { Message as AIMessage } from "ai";
+import { useChat } from "ai/react";
 import { useEffect, useRef } from "react";
+import Header from "./header";
+import ChatInput from "./input";
 
 function Message({
   message,
@@ -111,7 +111,7 @@ function ConversationChat({ convo }: { convo: ConversationWithMessages }) {
 }
 
 export default function Conversation() {
-  const { conversation } = useAppState();
+  const { conversation, refetchBalance } = useAppState();
 
   const {
     data: convo,
@@ -121,9 +121,15 @@ export default function Conversation() {
     queryKey: ["loadConversation", conversation],
     queryFn: () =>
       queryGet<ConversationWithMessages>(
-        "/api/conversations?id=" + conversation!.id
+        "/api/conversations?id=" + conversation!.id,
       ),
+    retry: false,
   });
+
+  useEffect(() => {
+    refetchBalance();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <div className="flex flex-col divide-y divide-extraLightGrey grow">

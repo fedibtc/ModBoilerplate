@@ -1,13 +1,13 @@
+import { minSats } from "@/lib/constants";
+import { satsForTokens, tokensForSats } from "@/lib/sats";
+import { getBalance } from "@/lib/server/auth";
+import prisma from "@/lib/server/prisma";
 import { OpenAIStream, StreamingTextResponse } from "ai";
 import { openai } from "./openai";
-import prisma from "@/lib/server/prisma";
-import { getBalance, requireNpub } from "@/lib/server/auth";
-import { satsForTokens, tokensForSats } from "@/lib/sats";
 
 export async function POST(req: Request) {
   try {
-    const npub = requireNpub();
-    const balance = await getBalance(npub);
+    const balance = await getBalance();
     const { messages, conversationId } = await req.json();
 
     if (typeof conversationId !== "number") {
@@ -22,7 +22,7 @@ export async function POST(req: Request) {
       throw new Error("No messages provided");
     }
 
-    if(balance.balance < 5) {
+    if (balance.balance < minSats) {
       throw new Error("Insufficient balance");
     }
 

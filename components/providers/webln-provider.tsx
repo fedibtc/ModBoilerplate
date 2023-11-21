@@ -58,6 +58,7 @@ export function WebLNProvider({ children }: { children: React.ReactNode }) {
       await window.webln.enable();
       return window.webln;
     },
+    retry: false,
   });
 
   return (

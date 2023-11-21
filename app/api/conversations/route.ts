@@ -3,7 +3,7 @@ import prisma from "@/lib/server/prisma";
 
 export async function GET(req: Request) {
   try {
-    requireNpub();
+    await requireNpub();
     const { searchParams } = new URL(req.url);
     const conversationId = Number(searchParams.get("id"));
 
