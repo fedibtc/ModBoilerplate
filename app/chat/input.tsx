@@ -26,7 +26,7 @@ export default function ChatInput({
       </Text>
     </div>
   ) : (
-    <div className="flex focus-within:!border-blue items-center px-md">
+    <div className="flex gap-md focus-within:!border-blue items-center px-md">
       <input
         className="border-none py-lg text-base w-full outline-none disabled:opacity-50"
         disabled={loading}
