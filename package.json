@@ -7,10 +7,11 @@
     "build": "next build",
     "start": "NODE_ENV=production next start",
     "lint": "next lint",
-    "format": "prettier --ignore-path .gitignore --write \"**/*.{js,ts,tsx}\" --plugin=prettier-plugin-organize-imports"
+    "format": "prettier --ignore-path .gitignore --write \"**/*.{js,ts,tsx}\""
   },
   "dependencies": {
     "@nostr-dev-kit/ndk": "^2.0.3",
+    "@prisma/client": "5.6.0",
     "@radix-ui/react-avatar": "^1.0.4",
     "@radix-ui/react-checkbox": "^1.0.4",
     "@radix-ui/react-dialog": "^1.0.5",
@@ -20,15 +21,16 @@
     "@tabler/icons-react": "^2.40.0",
     "@tanstack/react-query": "^5.4.3",
     "alby-tools": "^3.2.1",
+    "bolt11": "^1.4.1",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.0.0",
     "next": "latest",
+    "prisma": "^5.6.0",
     "qr-scanner": "^1.4.2",
     "qrloop": "^1.4.1",
     "react": "^18",
     "react-dom": "^18",
     "react-qr-code": "^2.0.12",
-    "redis": "^4.6.10",
     "tailwind-merge": "^1.14.0",
     "tailwindcss-animate": "^1.0.7",
     "webln": "^0.3.2",
@@ -44,9 +46,7 @@
     "eslint-config-next": "13.5.5",
     "postcss": "^8",
     "prettier": "^3.0.3",
-    "prettier-plugin-organize-imports": "^3.2.4",
     "tailwindcss": "^3",
-    "typescript": "^5.2.2",
-    "vercel": "^32.5.3"
+    "typescript": "^5.2.2"
   }
 }

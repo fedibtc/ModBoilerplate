@@ -18,33 +18,33 @@ type Tag =
 type Element<T extends Tag> = T extends "input"
   ? HTMLInputElement
   : T extends "button"
-  ? HTMLButtonElement
-  : T extends "textarea"
-  ? HTMLTextAreaElement
-  : T extends "img"
-  ? HTMLImageElement
-  : T extends "label"
-  ? HTMLLabelElement
-  : T extends "div"
-  ? HTMLDivElement
-  : T extends "span"
-  ? HTMLSpanElement
-  : T extends "form"
-  ? HTMLFormElement
-  : never;
+    ? HTMLButtonElement
+    : T extends "textarea"
+      ? HTMLTextAreaElement
+      : T extends "img"
+        ? HTMLImageElement
+        : T extends "label"
+          ? HTMLLabelElement
+          : T extends "div"
+            ? HTMLDivElement
+            : T extends "span"
+              ? HTMLSpanElement
+              : T extends "form"
+                ? HTMLFormElement
+                : never;
 
 // The attributes for a given HTML element
 type Attributes<T extends HTMLElement> = T extends HTMLInputElement
   ? React.InputHTMLAttributes<T>
   : T extends HTMLButtonElement
-  ? React.ButtonHTMLAttributes<T>
-  : T extends HTMLTextAreaElement
-  ? React.TextareaHTMLAttributes<T>
-  : T extends HTMLImageElement
-  ? React.ImgHTMLAttributes<T>
-  : T extends HTMLFormElement
-  ? React.FormHTMLAttributes<T>
-  : React.HTMLAttributes<T>;
+    ? React.ButtonHTMLAttributes<T>
+    : T extends HTMLTextAreaElement
+      ? React.TextareaHTMLAttributes<T>
+      : T extends HTMLImageElement
+        ? React.ImgHTMLAttributes<T>
+        : T extends HTMLFormElement
+          ? React.FormHTMLAttributes<T>
+          : React.HTMLAttributes<T>;
 
 // The props of a styled variant component
 type Props<

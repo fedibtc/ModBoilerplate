@@ -1,6 +1,8 @@
 import { invoiceVerificationTimeout } from "@/lib/constants";
-import client from "@/lib/server/redis";
-import { ZodSchema, z } from "zod";
+import prisma from "../prisma";
+import { ZodObject, ZodRawShape, z } from "zod";
+import { Invoice, Prisma } from "@prisma/client";
+import Bolt11 from "@/lib/bolt11";
 
 const { ALBY_ACCESS_TOKEN } = process.env;
 
@@ -8,231 +10,174 @@ if (!ALBY_ACCESS_TOKEN) {
   throw new Error("Missing environment variable ALBY_ACCESS_TOKEN");
 }
 
-export interface InvoiceUtilityArgs {
-  /**
-   * A Zod Schema for registering and verifying invoices
-   */
-  schema: ZodSchema;
-  /**
-   * Whether to securely create, remember, and verify one-time-use invoices
-   */
-  rememberInvoices?: boolean;
-}
-
 /**
  * Lightning Invoice Utility for creating and verifying invoices.
  */
-export default class InvoiceUtility {
-  private schema: ZodSchema;
-  private rememberInvoices: boolean;
+export default class InvoiceUtility<Sch extends ZodRawShape> {
+  private schema: ZodObject<Sch>;
 
-  constructor({ schema, rememberInvoices = false }: InvoiceUtilityArgs) {
+  constructor(schema: ZodObject<Sch>) {
     this.schema = schema;
-    this.rememberInvoices = rememberInvoices;
   }
 
   /**
    * Post JSON to an Alby API endpoint with a bearer token
    */
   private async postJSON<T = Record<string, any>>(path: string, body: T) {
-    return await fetch("https://api.getalby.com" + path, {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${ALBY_ACCESS_TOKEN}`,
-        "Content-Type": "application/json",
-        Accept: "application/json",
-      },
-      body: JSON.stringify(body),
-    }).then((r) => r.json());
+    try {
+      return await fetch("https://api.getalby.com" + path, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${ALBY_ACCESS_TOKEN}`,
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+        body: JSON.stringify(body),
+      }).then((r) => r.json());
+    } catch (err) {
+      console.log(err);
+      throw err;
+    }
   }
 
   /**
    * Get JSON from an Alby API endpoint with a bearer token
    */
   private async getJSON(path: string) {
-    return await fetch("https://api.getalby.com" + path, {
-      method: "GET",
-      headers: {
-        Authorization: `Bearer ${ALBY_ACCESS_TOKEN}`,
-        Accept: "application/json",
-      },
-    }).then((r) => r.json());
+    try {
+      return await fetch("https://api.getalby.com" + path, {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${ALBY_ACCESS_TOKEN}`,
+          Accept: "application/json",
+        },
+      }).then((r) => r.json());
+    } catch (err) {
+      console.log(err);
+      throw err;
+    }
   }
 
   /**
-   * Create a lightning invoice
+   * Create a lightning invoice with the Alby API
+   * @param {CreateInvoiceArgs} args - The arguments to create the invoice with
    */
   public async createInvoice(
     args: CreateInvoiceArgs,
   ): Promise<CreateInvoiceResponse> {
-    try {
-      const res = await this.postJSON("/invoices", args);
+    const res = await this.postJSON("/invoices", args);
 
-      if (res.error) {
-        throw new Error(res.message);
-      }
-
-      return res;
-    } catch (err) {
-      console.log(err);
-      throw err;
+    if (res.error) {
+      throw new Error(res.message);
     }
+
+    return res;
   }
 
   /**
-   * Decode a lightning invoice
+   * Creates an invoice following the structure of `this.schema`. The invoice will be stored in the Database for future reference.
+   * @param {CreateInvoiceArgs} args - The arguments to create the invoice with
+   * @param {z.infer<InvoiceUtility<Sch>["schema"]>} data - The data to register with the payment request
    */
-  public async decodeInvoice(
-    bolt11_invoice: string,
-  ): Promise<DecodeInvoiceResponse> {
-    try {
-      const res = await this.getJSON("/decode/bolt11/" + bolt11_invoice);
-      if (res.error) {
-        throw new Error(res.message);
-      }
-
-      return res;
-    } catch (err) {
-      console.log(err);
-      throw err;
-    }
-  }
-
-  /**
-   * Store a server-generated invoice payment hash to the Redis database for future verification
-   */
-  public async registerInvoiceHash(payment_hash: string) {
-    return await client.set(payment_hash, new Date().toDateString());
-  }
-
-  /**
-   * Verify (and delete) a server-generated invoice payment hash from the Redis database
-   */
-  public async verifyInvoiceHash(payment_hash: string): Promise<true> {
-    const trackedInvoice = (await client.get(payment_hash)) as
-      | string
-      | undefined
-      | null;
-
-    if (!trackedInvoice) {
-      throw new Error("Could not find invoice");
-    }
-
-    if (
-      Date.now() > new Date(trackedInvoice).getTime() &&
-      Date.now() - new Date(trackedInvoice).getTime() <=
-        invoiceVerificationTimeout
-    ) {
-      await client.del(payment_hash);
-      return true;
-    } else if (
-      Date.now() - new Date(trackedInvoice).getTime() >
-      invoiceVerificationTimeout
-    ) {
-      await client.del(payment_hash);
-      throw new Error("Invoice timed out");
-    }
-
-    throw new Error("Invoice not verified");
-  }
-
-  /**
-   * Creates an invoice following the structure of the provided Zod Schema. If `rememberInvoices` is true, the invoice will be stored in the Redis database for future reference.
-   */
-  public async registerInvoiceWithSchema(
-    args: Omit<CreateInvoiceArgs, "description" | "memo">,
-    data: z.infer<InvoiceUtility["schema"]>,
+  public async register(
+    args: CreateInvoiceArgs,
+    data: z.infer<InvoiceUtility<Sch>["schema"]>,
   ): Promise<CreateInvoiceResponse> {
-    try {
-      const parserResponse = this.schema.safeParse(data);
+    const parserResponse = this.schema.safeParse(data);
 
-      if (parserResponse.success) {
-        const res = await this.createInvoice({
-          ...args,
-          description: Buffer.from(JSON.stringify(data)).toString("base64"),
-        });
+    if (!parserResponse.success) throw new Error(parserResponse.error.message);
 
-        if (this.rememberInvoices) {
-          await this.registerInvoiceHash(res.payment_hash);
-        }
+    const res = await this.createInvoice(args);
 
-        return res;
-      } else {
-        throw new Error(parserResponse.error.message);
-      }
-    } catch (err) {
-      console.log(err);
-      throw err;
-    }
+    await prisma.invoice.create({
+      data: {
+        paymentRequest: res.payment_request,
+        data: Buffer.from(JSON.stringify(data)).toString("base64"),
+      },
+    });
+
+    return res;
   }
 
   /**
-   * Decodes an invoice encoded with the provided Zod Schema. If `rememberInvoices` is true, throws an error on an invoice not found in the Redis database.
+   * Decodes an invoice and verifies that its `data` field follows the structure of `this.schema`.
+   * @param {string} paymentRequest - The payment request to verify
    */
-  public async verifyInvoiceWithSchema(bolt11_invoice: string): Promise<{
-    invoice: DecodeInvoiceResponse;
-    data: z.infer<InvoiceUtility["schema"]>;
+  public async verify(
+    paymentRequest: string,
+    where: Omit<Prisma.InvoiceWhereInput, "paymentRequest"> = {},
+  ): Promise<{
+    invoice: Invoice;
+    data: z.infer<InvoiceUtility<Sch>["schema"]>;
   }> {
-    try {
-      const res = await this.decodeInvoice(bolt11_invoice);
+    {
+      const decodedInvoice = new Bolt11({ paymentRequest }).decode();
 
-      if (!res?.description) {
-        throw new Error(
-          "Cannot check the structure of a blank invoice description",
-        );
-      }
+      const hash = decodedInvoice.tagsObject.payment_hash;
 
-      const inv = await this.getJSON("/invoices/" + res.payment_hash);
+      if (!hash) throw new Error("Cannot find payment hash");
 
-      if (!inv) {
-        throw new Error("Cannot find invoice");
-      }
+      const inv = await this.getJSON("/invoices/" + hash);
 
-      if (inv.state !== "SETTLED" || !inv.settled) {
+      if (!inv) throw new Error("Cannot find invoice");
+      if (inv.state !== "SETTLED" || !inv.settled)
         throw new Error("Invoice not paid");
-      }
+      if (Date.now() > new Date(inv.expires_at).getTime())
+        throw new Error("Invoice expired");
+
+      const invoice = await prisma.invoice.findFirst({
+        where: {
+          paymentRequest,
+          ...where,
+        },
+      });
+
+      if (!invoice) throw new Error("Could not find invoice");
+      if (invoice.status === "PAID") throw new Error("Invoice already paid");
+      if (invoice.status === "EXPIRED") throw new Error("Invoice expired");
 
       if (
-        inv.statue === "EXPIRED" ||
-        Date.now() > new Date(inv.expires_at).getTime()
+        Date.now() - new Date(invoice.createdAt).getTime() >
+        invoiceVerificationTimeout
       ) {
-        throw new Error("Invoice expired");
+        await prisma.invoice.update({
+          where: {
+            id: invoice.id,
+          },
+          data: {
+            status: "EXPIRED",
+          },
+        });
+        throw new Error("Invoice timed out");
       }
 
-      if (this.rememberInvoices) {
-        await this.verifyInvoiceHash(inv.payment_hash);
-      }
-
-      const description = Buffer.from(res.description, "base64").toString(
-        "utf8",
+      const parserResponse = this.schema.safeParse(
+        JSON.parse(Buffer.from(invoice.data ?? "", "base64").toString("utf8")),
       );
 
-      const decoded = JSON.parse(description);
-
-      const parserResponse = this.schema.safeParse(decoded);
-
-      if (parserResponse.success) {
-        return {
-          invoice: res,
-          data: parserResponse.data,
-        };
-      } else {
+      if (!parserResponse.success)
         throw new Error(parserResponse.error.message);
-      }
-    } catch (err) {
-      console.log(err);
-      throw err;
+
+      return {
+        invoice: await prisma.invoice.update({
+          where: {
+            id: invoice.id,
+          },
+          data: {
+            status: "PAID",
+          },
+        }),
+        data: parserResponse.data,
+      };
     }
   }
 }
 
-export type AvailableCurrency = "bc" | "btc";
-
-export interface CreateInvoiceArgs {
+interface CreateInvoiceArgs {
   amount: number;
   description?: string;
   description_hash?: string;
-  currency?: AvailableCurrency;
+  currency?: "bc" | "btc";
   memo?: string;
   comment?: string;
   metadata?: Record<string, any>;
@@ -241,13 +186,13 @@ export interface CreateInvoiceArgs {
   payer_pubkey?: string;
 }
 
-export interface CreateInvoiceResponse {
+interface CreateInvoiceResponse {
   amount: number;
   boostagram?: null | any;
   comment?: string | null;
   created_at: string;
   creation_date: number;
-  currency: AvailableCurrency;
+  currency: "bc" | "btc";
   custom_records?: Record<string, any> | null;
   description_hash?: null | string;
   expires_at: string;
@@ -275,18 +220,4 @@ export interface CreateInvoiceResponse {
   first_route_hint_alias?: string | null;
   qr_code_png: string;
   qr_code_svg: string;
-}
-
-export interface DecodeInvoiceResponse {
-  currency: AvailableCurrency;
-  created_at: number;
-  expiry: number;
-  payee: string;
-  msatoshi: number;
-  description?: string;
-  payment_hash: string;
-  min_final_cltv_expiry?: number;
-  amount: number;
-  payee_alias?: string;
-  route_hint_aliases?: Array<never>;
 }
