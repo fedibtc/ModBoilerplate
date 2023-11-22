@@ -35,9 +35,9 @@ export type Bolt11DecodeResult = PaymentRequestObject & {
   tagsObject: TagsObject;
 };
 
-type BtcNetwork = "mainnet" | "mutinynet";
+export type BtcNetwork = "mainnet" | "mutinynet";
 
-interface Bolt11Args {
+export interface Bolt11Args {
   /**
    * A bolt11 payment request
    */
