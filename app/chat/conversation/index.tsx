@@ -12,13 +12,12 @@ import Header from "../header";
 import ChatInput from "../input";
 import LoadingState from "./loading-state";
 import Message from "./message";
-import { Message as PrismaMessage } from "@prisma/client";
 
 function ConversationChat({ convo }: { convo: ConversationWithMessages }) {
   const { refetchBalance } = useAppState();
   const { messages, input, handleInputChange, handleSubmit, isLoading } =
     useChat({
-      initialMessages: convo.messages.map((x: PrismaMessage) => ({
+      initialMessages: convo.messages.map((x) => ({
         id: String(x.id),
         content: x.content,
         role: x.role === "SYSTEM" ? "system" : "user",
