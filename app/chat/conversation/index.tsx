@@ -12,12 +12,13 @@ import Header from "../header";
 import ChatInput from "../input";
 import LoadingState from "./loading-state";
 import Message from "./message";
+import { Message as PrismaMessage } from "@prisma/client";
 
 function ConversationChat({ convo }: { convo: ConversationWithMessages }) {
   const { refetchBalance } = useAppState();
   const { messages, input, handleInputChange, handleSubmit, isLoading } =
     useChat({
-      initialMessages: convo.messages.map((x) => ({
+      initialMessages: convo.messages.map((x: PrismaMessage) => ({
         id: String(x.id),
         content: x.content,
         role: x.role === "SYSTEM" ? "system" : "user",
@@ -77,7 +78,7 @@ export default function Conversation() {
     queryKey: ["loadConversation", conversation],
     queryFn: () =>
       queryGet<ConversationWithMessages>(
-        "/api/conversations?id=" + conversation!.id,
+        "/api/conversations?id=" + conversation!.id
       ),
     retry: false,
   });
