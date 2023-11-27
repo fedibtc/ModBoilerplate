@@ -43,15 +43,6 @@ function ConversationChat({ convo }: { convo: ConversationWithMessages }) {
           {messages.map((m, i) => (
             <Message message={m} key={i} />
           ))}
-          {isLoading && (
-            <Message
-              message={{
-                content: "...",
-                role: "system",
-              }}
-              loading
-            />
-          )}
           <div ref={scrollRef} />
         </div>
       </div>
@@ -77,7 +68,7 @@ export default function Conversation() {
     queryKey: ["loadConversation", conversation],
     queryFn: () =>
       queryGet<ConversationWithMessages>(
-        "/api/conversations?id=" + conversation!.id
+        "/api/conversations?id=" + conversation!.id,
       ),
     retry: false,
   });
