@@ -1,6 +1,6 @@
 "use client";
 import { createContext, use, useEffect, useState } from "react";
-import { WebLNProvider } from "webln";
+import { WebLNProvider } from "@webbtc/webln-types";
 
 export interface WebLNContextResult {
   webln: WebLNProvider | undefined;
@@ -43,7 +43,7 @@ export const WebLNContext = createContext<WebLNProviderType | null>(null);
  * Connects to `window.webln`, enabling and exposing `webln` through `WebLNContext`.
  */
 export function WebLNProvider({ children }: { children: React.ReactNode }) {
-  const [webln, setWebln] = useState<WebLN | undefined>(undefined);
+  const [webln, setWebln] = useState<WebLNProvider | undefined>(undefined);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
 
@@ -56,8 +56,12 @@ export function WebLNProvider({ children }: { children: React.ReactNode }) {
 
         await window.webln.enable();
 
-        setWebln(window.webln);
-        setIsLoading(false);
+        if (window.webln?.isEnabled?.()) {
+          setWebln(window.webln);
+          setIsLoading(false);
+        } else {
+          throw new Error("Could not enable WebLN Provider");
+        }
       } catch (err) {
         setError(err as Error);
         setIsLoading(false);
