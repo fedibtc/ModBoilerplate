@@ -1,7 +1,6 @@
 "use client";
-import { useQuery } from "@tanstack/react-query";
-import { createContext, use } from "react";
-import { WebLNProvider } from "webln";
+import { createContext, use, useEffect, useState } from "react";
+import { WebLNProvider as WebLN, WebLNProvider } from "webln";
 
 export interface WebLNContextResult {
   webln: WebLNProvider | undefined;
@@ -28,7 +27,7 @@ interface WebLNErrorResult extends WebLNContextResult {
 }
 
 interface WebLNSuccessResult extends WebLNContextResult {
-  webln: WebLNProvider;
+  webln: WebLN;
   isLoading: false;
   error: null;
 }
@@ -44,22 +43,28 @@ export const WebLNContext = createContext<WebLNProviderType | null>(null);
  * Connects to `window.webln`, enabling and exposing `webln` through `WebLNContext`.
  */
 export function WebLNProvider({ children }: { children: React.ReactNode }) {
-  const {
-    data: webln,
-    isLoading,
-    error,
-  } = useQuery({
-    queryKey: ["webln"],
-    queryFn: async () => {
-      if (typeof window.webln === "undefined") {
-        throw new Error("Could not find a WebLN Provider");
-      }
+  const [webln, setWebln] = useState<WebLN | undefined>(undefined);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<Error | null>(null);
 
-      await window.webln.enable();
-      return window.webln;
-    },
-    retry: false,
-  });
+  useEffect(() => {
+    async function init() {
+      try {
+        if (typeof window.webln === "undefined") {
+          throw new Error("Could not find a WebLN Provider");
+        }
+
+        await window.webln.enable();
+
+        setWebln(window.webln);
+        setIsLoading(false);
+      } catch (err) {
+        setError(err as Error);
+        setIsLoading(false);
+      }
+    }
+    init();
+  }, []);
 
   return (
     <WebLNContext.Provider

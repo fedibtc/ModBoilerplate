@@ -28,6 +28,9 @@ function Fallback() {
           size="xl"
           className="animate-load text-lightGrey"
         />
+        <Text>
+          {weblnLoading ? "Initializing WebLN..." : "Initializing Nostr..."}
+        </Text>
       </Container>
     );
   }
@@ -72,10 +75,10 @@ function Fallback() {
 
 export default function Index() {
   return (
-    <NostrProvider>
-      <WebLNProvider>
+    <WebLNProvider>
+      <NostrProvider>
         <Fallback />
-      </WebLNProvider>
-    </NostrProvider>
+      </NostrProvider>
+    </WebLNProvider>
   );
 }

@@ -1,8 +1,7 @@
 "use client";
 import { RELAYS } from "@/lib/constants";
 import NDK, { NDKNip07Signer, NDKUser } from "@nostr-dev-kit/ndk";
-import { useQuery } from "@tanstack/react-query";
-import { createContext, use } from "react";
+import { createContext, use, useEffect, useState } from "react";
 
 export interface NostrContextResult {
   /**
@@ -52,9 +51,14 @@ export const NostrContext = createContext<NostrProviderType | null>(null);
  * Connects to `window.nostr`, initializing and exposing `user` and `ndk` through `NostrConnectionContext`.
  */
 export function NostrProvider({ children }: { children: React.ReactNode }) {
-  const { data, isLoading, error } = useQuery({
-    queryKey: ["ndk"],
-    queryFn: async () => {
+  const [data, setData] = useState<{ user: NDKUser; ndk: NDK } | undefined>(
+    undefined,
+  );
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<Error | null>(null);
+
+  useEffect(() => {
+    async function init() {
       try {
         const signer = new NDKNip07Signer();
         const ndk = new NDK({
@@ -62,23 +66,20 @@ export function NostrProvider({ children }: { children: React.ReactNode }) {
           signer,
         });
 
-        ndk.pool.on("relay:connect", async (r: any) => {
-          console.log(`Connected to a relay ${r.url}`);
-        });
-
         ndk.connect(2500);
 
         const user = await signer.user();
 
         document.cookie = "npub=" + user.npub;
-
-        return { user, ndk };
+        setData({ user, ndk });
+        setIsLoading(false);
       } catch (err) {
-        throw new Error((err as any).message);
+        setError(err as Error);
+        setIsLoading(false);
       }
-    },
-    retry: false,
-  });
+    }
+    init();
+  }, []);
 
   return (
     <NostrContext.Provider
