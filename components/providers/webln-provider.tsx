@@ -1,6 +1,6 @@
 "use client";
-import { createContext, use, useEffect, useState } from "react";
 import { WebLNProvider as WebLN } from "@webbtc/webln-types";
+import { createContext, use, useEffect, useState } from "react";
 
 export interface WebLNContextResult {
   webln: WebLN | undefined;
@@ -102,7 +102,7 @@ export function useWebLNContext(): WebLNProviderType {
 /**
  * Returns a `WebLNProvider` instance. Throws an error if not used in a WebLNProvider or if not initialized.
  */
-export function useWebLN(): WebLNProvider {
+export function useWebLN(): WebLN {
   const res = useWebLNContext();
 
   if (typeof res.webln === "undefined") {
