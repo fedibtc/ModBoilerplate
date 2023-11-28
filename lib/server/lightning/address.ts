@@ -48,7 +48,7 @@ export default class LnAddressUtil {
     const res = await this.getJSON(url.pathname + url.search);
 
     if (res.error || res.status !== "OK") {
-      throw new Error(res.message || res.status);
+      throw new Error(res.reason || res.message || res.status);
     }
 
     return res;

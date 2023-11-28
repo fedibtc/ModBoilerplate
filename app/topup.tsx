@@ -3,6 +3,7 @@ import { useWebLN } from "@/components/providers/webln-provider";
 import { Button } from "@/components/ui/button";
 import { Dialog } from "@/components/ui/dialog";
 import { DialogStatus } from "@/components/ui/dialog/status";
+import { useToast } from "@/components/ui/hooks/use-toast";
 import { Input } from "@/components/ui/input";
 import { mutateWithBody } from "@/lib/rest";
 import { CreateInvoiceResponse } from "@/lib/server/lightning/address";
@@ -15,6 +16,7 @@ export default function TopupDialog() {
   const [paymentPending, setPaymentPending] = useState(false);
 
   const webln = useWebLN();
+  const { toast } = useToast();
 
   const {
     mutate: updateBalance,
@@ -37,6 +39,11 @@ export default function TopupDialog() {
         setTopupDialog(false);
       }, 2000);
     },
+    onError: (err) => {
+      toast({
+        content: err.message,
+      });
+    },
   });
 
   const {
@@ -53,6 +60,11 @@ export default function TopupDialog() {
       setPaymentPending(true);
       await webln.sendPayment(data.pr);
       await updateBalance(data.pr);
+    },
+    onError: (err) => {
+      toast({
+        content: err.message,
+      });
     },
   });
 

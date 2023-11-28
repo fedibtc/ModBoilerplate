@@ -11,7 +11,7 @@ export async function POST(req: Request) {
       throw new Error("No amount provided");
     }
 
-    if (body.amount < 0) {
+    if (body.amount <= 0) {
       throw new Error("Amount must be greater than 0");
     }
 
