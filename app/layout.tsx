@@ -4,7 +4,7 @@ import { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "LnGPT " + process.env.NODE_ENV === "development" ? "🛠️" : "⚡️",
+  title: "LnGPT " + (process.env.NODE_ENV === "development" ? "🛠️" : "⚡️"),
   description: "Sats for Chats",
   icons: {
     icon: "/favicon.ico",
