@@ -102,18 +102,23 @@ export default function EmptyState() {
           <Button onClick={() => setTopupDialog(true)}>Topup</Button>
         </div>
       )}
-
-      <ChatInput
-        value={value}
-        placeholder={
-          conversations?.length === 0
-            ? "Send a message..."
-            : "Start a conversation..."
-        }
-        onChange={(e) => setValue(e.target.value)}
-        loading={createConversationLoading}
-        onSubmit={() => createConversation(value)}
-      />
+      <form
+        onSubmit={(e) => {
+          e.preventDefault();
+          createConversation(value);
+        }}
+      >
+        <ChatInput
+          value={value}
+          placeholder={
+            conversations?.length === 0
+              ? "Send a message..."
+              : "Start a conversation..."
+          }
+          onChange={(e) => setValue(e.target.value)}
+          loading={createConversationLoading}
+        />
+      </form>
     </>
   );
 }

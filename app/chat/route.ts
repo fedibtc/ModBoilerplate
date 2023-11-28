@@ -96,6 +96,7 @@ export async function POST(req: Request) {
       data: convo,
     });
   } catch (err) {
+    console.log(err);
     return Response.json({
       success: false,
       message: (err as Error).message,
