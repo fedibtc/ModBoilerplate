@@ -66,13 +66,27 @@ export function NostrProvider({ children }: { children: React.ReactNode }) {
           signer,
         });
 
-        ndk.connect(2500);
+        await ndk.connect(2500);
 
-        const user = await signer.user();
+        if (
+          "nostr" in window &&
+          window.nostr &&
+          (("isEnabled" in window?.nostr &&
+            typeof window.nostr.isEnabled === "function" &&
+            (await window.nostr?.isEnabled())) ||
+            ("isEnabled" in window?.nostr &&
+              typeof window.nostr.isEnabled === "boolean" &&
+              window.nostr.isEnabled) ||
+            ("_isEnabled" in window?.nostr && window.nostr?._isEnabled))
+        ) {
+          const user = await signer.user();
 
-        document.cookie = "npub=" + user.npub;
-        setData({ user, ndk });
-        setIsLoading(false);
+          document.cookie = "npub=" + user.npub;
+          setData({ user, ndk });
+          setIsLoading(false);
+        } else {
+          throw new Error("Could not connect to Nostr");
+        }
       } catch (err) {
         setError(err as Error);
         setIsLoading(false);
