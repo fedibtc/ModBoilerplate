@@ -56,7 +56,15 @@ export function WebLNProvider({ children }: { children: React.ReactNode }) {
 
         await window.webln.enable();
 
-        if (window.webln?.isEnabled?.()) {
+        if (
+          ("isEnabled" in window.webln &&
+            typeof window.webln.isEnabled === "function" &&
+            (await window.webln?.isEnabled())) ||
+          ("isEnabled" in window.webln &&
+            typeof window.webln.isEnabled === "boolean" &&
+            window.webln.isEnabled) ||
+          ("_isEnabled" in window.webln && window.webln?.isEnabled)
+        ) {
           setWebln(window.webln);
           setIsLoading(false);
         } else {
