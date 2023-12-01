@@ -9,6 +9,7 @@ const sch = z.object({
 
 const inv = new LnAddressUtil(sch);
 
+// Register an invoice on the server
 export async function POST() {
   try {
     const npub = cookies().get("npub");
@@ -42,6 +43,7 @@ export async function POST() {
   }
 }
 
+// Check the status of the invoice
 export async function GET(req: Request) {
   const url = new URL(req.url);
   const paymentRequest = url.searchParams.get("paymentRequest");
