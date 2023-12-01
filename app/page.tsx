@@ -45,6 +45,15 @@ export default function Index() {
               <Icon icon="IconChevronRight" />
             </Link>
           </li>
+          <li>
+            <Link
+              href="/payment"
+              className="text-grey inline-flex gap-sm items-center"
+            >
+              <span>Secure Lighting Payment</span>
+              <Icon icon="IconChevronRight" />
+            </Link>
+          </li>
         </ul>
       </Text>
     </Container>
