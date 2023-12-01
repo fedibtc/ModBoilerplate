@@ -4,7 +4,8 @@
   "private": true,
   "scripts": {
     "dev": "NODE_ENV=development next dev",
-    "build": "next build",
+    "db:update": "bun prisma migrate dev && bun prisma generate",
+    "build": "bun db:update && next build",
     "start": "NODE_ENV=production next start",
     "lint": "next lint",
     "format": "prettier --ignore-path .gitignore --write \"**/*.{js,ts,tsx}\""
