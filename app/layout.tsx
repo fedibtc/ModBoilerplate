@@ -1,6 +1,7 @@
 import QueryClientProvider from "@/components/providers/query-client-provider";
 import { Toaster } from "@/components/ui/toaster";
 import { Metadata } from "next";
+import { Analytics } from "@vercel/analytics/react";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -29,6 +30,7 @@ export default function RootLayout({
           {children}
           <Toaster />
         </QueryClientProvider>
+        <Analytics />
       </body>
     </html>
   );

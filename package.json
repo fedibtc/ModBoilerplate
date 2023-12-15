@@ -23,6 +23,7 @@
     "@radix-ui/react-toast": "^1.1.5",
     "@tabler/icons-react": "^2.40.0",
     "@tanstack/react-query": "^5.4.3",
+    "@vercel/analytics": "^1.1.1",
     "ai": "^2.2.24",
     "alby-tools": "^3.2.1",
     "bolt11": "^1.4.1",
