@@ -132,7 +132,7 @@ export default function TopupDialog() {
               ? unifiedError.message
               : paymentPending
               ? "Waiting for payment..."
-              : "Successfully topped up your account"
+              : "Topup Successful"
           }
         />
       )}
