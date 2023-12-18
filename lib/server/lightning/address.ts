@@ -67,7 +67,7 @@ export default class LnAddressUtil {
 
   public async registerInvoiceHash(
     args: CreateInvoiceResponse,
-    pubkey: string,
+    userID: number,
   ) {
     const hash = this.decodeInvoice(args.pr).tagsObject.payment_hash;
 
@@ -76,16 +76,16 @@ export default class LnAddressUtil {
     }
 
     return await prisma?.invoice.create({
-      data: { paymentHash: hash, verifyUrl: args.verify, pubkey },
+      data: { paymentHash: hash, verifyUrl: args.verify, userID },
     });
   }
 
   public async verifyInvoiceHash(
     paymentHash: string,
-    pubkey: string,
+    userID: number,
   ): Promise<true> {
     const invoice = await prisma?.invoice.findFirst({
-      where: { paymentHash, pubkey },
+      where: { paymentHash, userID },
     });
 
     const trackedInvoice = invoice?.timeCreated;
@@ -132,7 +132,7 @@ export default class LnAddressUtil {
 
   public async registerInvoice(
     args: Omit<CreateInvoiceArgs, "description" | "memo">,
-    pubkey: string,
+    userID: number,
   ): Promise<CreateInvoiceResponse> {
     try {
       const res = await this.createInvoice({
@@ -147,7 +147,7 @@ export default class LnAddressUtil {
       }
 
       if (this.rememberInvoices) {
-        await this.registerInvoiceHash(res, pubkey);
+        await this.registerInvoiceHash(res, userID);
       }
 
       return res;
@@ -159,12 +159,12 @@ export default class LnAddressUtil {
 
   public async verifyInvoice(
     bolt11_invoice: string,
-    pubkey: string,
+    userID: number,
   ): Promise<{
     invoice: ReturnType<typeof bolt11.decode>;
   }> {
     try {
-      const res = await this.decodeInvoice(bolt11_invoice);
+      const res = this.decodeInvoice(bolt11_invoice);
 
       const hash = res.tagsObject.payment_hash;
 
@@ -173,7 +173,7 @@ export default class LnAddressUtil {
       }
 
       if (this.rememberInvoices) {
-        await this.verifyInvoiceHash(hash, pubkey);
+        await this.verifyInvoiceHash(hash, userID);
       }
 
       return {

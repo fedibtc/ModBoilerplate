@@ -1,17 +1,20 @@
 "use client";
-import { RELAYS } from "@/lib/constants";
-import NDK, { NDKNip07Signer, NDKUser } from "@nostr-dev-kit/ndk";
+import { User } from "@prisma/client";
 import { createContext, use, useEffect, useState } from "react";
+import { Dialog } from "../ui/dialog";
+import { Input } from "../ui/input";
+import { Button } from "../ui/button";
+
+declare global {
+  interface Window {
+    nostr?: {
+      getPublicKey: () => Promise<string>;
+    };
+  }
+}
 
 export interface NostrContextResult {
-  /**
-   * A connected instance of the Nostr Dev Kit class
-   */
-  ndk: NDK | undefined;
-  /**
-   * An NDKUser instance representing the current user over `window.nostr`
-   */
-  user: NDKUser | undefined;
+  user: User | undefined;
   /**
    * Whether the Nostr connection is loading
    */
@@ -37,8 +40,7 @@ interface NostrErrorResult extends NostrContextResult {
 }
 
 interface NostrSuccessResult extends NostrContextResult {
-  ndk: NDK;
-  user: NDKUser;
+  user: User;
   isLoading: false;
   error: null;
 }
@@ -51,28 +53,69 @@ export const NostrContext = createContext<NostrProviderType | null>(null);
  * Connects to `window.nostr`, initializing and exposing `user` and `ndk` through `NostrConnectionContext`.
  */
 export function NostrProvider({ children }: { children: React.ReactNode }) {
-  const [data, setData] = useState<{ user: NDKUser; ndk: NDK } | undefined>(
-    undefined,
-  );
+  const [data, setData] = useState<{ user: User } | undefined>(undefined);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
+  const [isNewUser, setIsNewUser] = useState(false);
+  const [open, setOpen] = useState(false);
+  const [pin, setPin] = useState("");
+
+  const login = async () => {
+    try {
+      const npub = await window.nostr?.getPublicKey();
+
+      const res = await fetch("/api/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          accept: "application/json",
+        },
+        body: JSON.stringify({
+          pin,
+          npub,
+        }),
+      }).then((r) => r.json());
+
+      if (!res.success) {
+        throw new Error(res.message);
+      } else {
+        setData(res.data);
+        setIsLoading(false);
+        setOpen(false);
+      }
+    } catch (err) {
+      setError(err as Error);
+      setIsLoading(false);
+    }
+  };
 
   useEffect(() => {
     async function init() {
       try {
-        const signer = new NDKNip07Signer();
-        const ndk = new NDK({
-          explicitRelayUrls: RELAYS,
-          signer,
-        });
+        const npub = await window.nostr?.getPublicKey();
 
-        ndk.connect(2500);
+        let exists = await fetch("/api/user", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            accept: "application/json",
+          },
+          body: JSON.stringify({
+            npub,
+          }),
+        }).then((r) => r.json());
 
-        const user = await signer.user();
+        if (!exists.success) {
+          throw new Error(exists.message);
+        }
 
-        document.cookie = "npub=" + user.npub;
-        setData({ user, ndk });
-        setIsLoading(false);
+        if (exists.user) {
+          setData({ user: exists.user });
+          setIsLoading(false);
+        } else {
+          setIsNewUser(!exists.success);
+          setOpen(true);
+        }
       } catch (err) {
         setError(err as Error);
         setIsLoading(false);
@@ -86,13 +129,32 @@ export function NostrProvider({ children }: { children: React.ReactNode }) {
       value={
         {
           user: data?.user,
-          ndk: data?.ndk,
           isLoading,
           error,
         } as NostrProviderType
       }
     >
       {children}
+      <Dialog
+        title={isNewUser ? "Create a PIN" : "Enter your PIN"}
+        open={open}
+        onOpenChange={() => {}}
+        description={
+          isNewUser
+            ? "Create a 4-6 digit PIN to secure your account. Please write it down as this cannot be recovered."
+            : "Please enter your PIN you created when you signed up."
+        }
+      >
+        <div className="flex flex-col gap-2">
+          <Input
+            value={pin}
+            onChange={(e) => setPin(e.target.value.replace(/[^0-9]/g, ""))}
+            placeholder="012345"
+            maxLength={6}
+          />
+          <Button onClick={login}>Submit</Button>
+        </div>
+      </Dialog>
     </NostrContext.Provider>
   );
 }
@@ -111,22 +173,9 @@ export function useNDKContext(): NostrProviderType {
 }
 
 /**
- * Returns a Nostr NDK instance. Throws an error if not used in a NostrProvider or if not initialized.
- */
-export function useNDK(): NDK {
-  const res = useNDKContext();
-
-  if (typeof res.ndk === "undefined") {
-    throw new Error("Nostr provider is not connected");
-  }
-
-  return res.ndk;
-}
-
-/**
  * Returns an NDKUser instance representing the current user over `window.nostr`. Throws an error if not used in a NostrProvider or if not initialized.
  */
-export function useNDKUser(): NDKUser {
+export function useNDKUser(): User {
   const res = useNDKContext();
 
   if (typeof res.user === "undefined") {

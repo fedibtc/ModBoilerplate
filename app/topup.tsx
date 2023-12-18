@@ -30,7 +30,7 @@ export default function TopupDialog() {
         invoice: string;
       }>("/invoice", { invoice }, "PUT"),
     onSuccess: async () => {
-      await refetchBalance();
+      refetchBalance();
       setPaymentPending(false);
       setTimeout(() => {
         resetAwaitInvoiceMutation();
@@ -59,7 +59,7 @@ export default function TopupDialog() {
     onSuccess: async (data) => {
       setPaymentPending(true);
       await webln.sendPayment(data.pr);
-      await updateBalance(data.pr);
+      updateBalance(data.pr);
     },
     onError: (err) => {
       toast({
@@ -124,15 +124,15 @@ export default function TopupDialog() {
             unifiedError
               ? unifiedError?.message
               : paymentPending
-              ? "Loading..."
-              : "Success!"
+                ? "Loading..."
+                : "Success!"
           }
           description={
             unifiedError
               ? unifiedError.message
               : paymentPending
-              ? "Waiting for payment..."
-              : "Topup Successful"
+                ? "Waiting for payment..."
+                : "Topup Successful"
           }
         />
       )}

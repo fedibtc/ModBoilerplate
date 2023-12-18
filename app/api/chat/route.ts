@@ -7,7 +7,7 @@ import { openai } from "./openai";
 
 export async function POST(req: Request) {
   try {
-    const balance = await getBalance();
+    const { balance } = await getBalance();
     const { messages, conversationId } = await req.json();
 
     if (typeof conversationId !== "number") {

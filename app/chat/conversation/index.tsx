@@ -15,20 +15,19 @@ import Message from "./message";
 
 function ConversationChat({ convo }: { convo: ConversationWithMessages }) {
   const { refetchBalance } = useAppState();
-  const { messages, input, handleInputChange, handleSubmit, isLoading } =
-    useChat({
-      initialMessages: convo.messages.map((x) => ({
-        id: String(x.id),
-        content: x.content,
-        role: x.role === "SYSTEM" ? "system" : "user",
-      })) as Array<AIMessage>,
-      body: {
-        conversationId: convo.id,
-      },
-      onFinish: () => {
-        refetchBalance();
-      },
-    });
+  const { messages, input, handleInputChange, handleSubmit } = useChat({
+    initialMessages: convo.messages.map((x) => ({
+      id: String(x.id),
+      content: x.content,
+      role: x.role === "SYSTEM" ? "system" : "user",
+    })) as Array<AIMessage>,
+    body: {
+      conversationId: convo.id,
+    },
+    onFinish: () => {
+      refetchBalance();
+    },
+  });
 
   const scrollRef = useRef<HTMLDivElement>(null);
 

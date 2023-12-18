@@ -21,6 +21,8 @@
 *.rdb
 /.cache
 .cache
+/data
+data
 
 # debug
 npm-debug.log*

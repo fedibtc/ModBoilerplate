@@ -10,7 +10,7 @@
     "db:create_migration": "prisma migrate dev --name",
     "db:typegen": "prisma generate",
     "db:migrate": "prisma migrate deploy",
-    "format": "prettier --ignore-path .gitignore --write \"**/*.{js,ts,tsx}\" --plugin=prettier-plugin-organize-imports"
+    "format": "prettier --ignore-path .gitignore --write \"**/*.{ts,tsx}\""
   },
   "dependencies": {
     "@nostr-dev-kit/ndk": "^2.0.3",
@@ -30,6 +30,7 @@
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.0.0",
     "next": "14.0.2",
+    "nostr-tools": "^1.17.0",
     "openai": "^4.19.0",
     "prisma": "^5.6.0",
     "qr-scanner": "^1.4.2",

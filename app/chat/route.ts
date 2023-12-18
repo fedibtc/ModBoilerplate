@@ -1,19 +1,17 @@
 import { minSats } from "@/lib/constants";
 import { satsForTokens, tokensForSats } from "@/lib/sats";
-import { getBalance, requireNpub } from "@/lib/server/auth";
+import { getBalance, requireUserBySk } from "@/lib/server/auth";
 import prisma from "@/lib/server/prisma";
 import { openai } from "../api/chat/openai";
 
 export async function POST(req: Request) {
   try {
-    const npub = await requireNpub();
+    const { user, balance } = await getBalance();
     const body = await req.json();
 
     if (!("text" in body) || typeof body.text !== "string") {
       throw new Error("No text provided");
     }
-
-    const balance = await getBalance();
 
     if (balance.balance < minSats) {
       throw new Error("Insufficient balance");
@@ -43,7 +41,7 @@ export async function POST(req: Request) {
 
     const convo = await prisma.conversation.create({
       data: {
-        pubkey: npub,
+        userID: user.id,
         title,
       },
     });
@@ -106,13 +104,7 @@ export async function POST(req: Request) {
 
 export async function GET() {
   try {
-    const npub = await requireNpub();
-
-    const conversations = await prisma.conversation.findMany({
-      where: {
-        pubkey: npub,
-      },
-    });
+    const { conversations } = await requireUserBySk({ conversations: true });
 
     return Response.json({
       success: true,
@@ -128,7 +120,7 @@ export async function GET() {
 
 export async function DELETE(req: Request) {
   try {
-    const npub = await requireNpub();
+    const user = await requireUserBySk();
     const body = await req.json();
 
     if (
@@ -141,7 +133,7 @@ export async function DELETE(req: Request) {
     const conversation = await prisma.conversation.findFirst({
       where: {
         id: body.conversationId,
-        pubkey: npub,
+        userID: user.id,
       },
     });
 

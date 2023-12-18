@@ -13,10 +13,11 @@ datasource db {
 
 model Conversation {
   id          Int       @id @default(autoincrement())
-  pubkey      String
+  userID      Int
   title       String
   timeCreated DateTime  @default(now())
   messages    Message[]
+  user        User      @relation(fields: [userID], references: [id])
 }
 
 model Message {
@@ -33,15 +34,29 @@ enum Role {
 }
 
 model Invoice {
-  id           Int      @id @default(autoincrement())
-  paymentHash  String   @unique
-  verifyUrl    String?
-  pubkey       String
-  timeCreated  DateTime @default(now())
+  id          Int      @id @default(autoincrement())
+  paymentHash String   @unique
+  verifyUrl   String?
+  timeCreated DateTime @default(now())
+  user        User     @relation(fields: [userID], references: [id])
+  userID      Int
 }
 
 model Balance {
-  id          Int     @id @default(autoincrement())
-  pubkey      String
-  balance     Int 
+  id      Int  @id @default(autoincrement())
+  userID  Int  @unique
+  balance Int
+  user    User @relation(fields: [userID], references: [id])
+}
+
+model User {
+  id            Int            @id @unique @default(autoincrement())
+  pin           String
+  npub          String
+  publicKey     String
+  privateKey    String
+  timeCreated   DateTime       @default(now())
+  balance       Balance?
+  invoices      Invoice[]
+  conversations Conversation[]
 }

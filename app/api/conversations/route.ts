@@ -1,8 +1,8 @@
-import { requireNpub } from "@/lib/server/auth";
+import { requireUserBySk } from "@/lib/server/auth";
 import prisma from "@/lib/server/prisma";
 
 export async function GET(req: Request) {
-  const npub = await requireNpub();
+  const user = await requireUserBySk();
   const { searchParams } = new URL(req.url);
   const conversationId = Number(searchParams.get("id"));
 
@@ -11,7 +11,7 @@ export async function GET(req: Request) {
   const conversation = await prisma.conversation.findFirst({
     where: {
       id: conversationId,
-      pubkey: npub,
+      userID: user.id,
     },
     include: {
       messages: true,
