@@ -150,6 +150,7 @@ export function NostrProvider({ children }: { children: React.ReactNode }) {
             value={pin}
             onChange={(e) => setPin(e.target.value.replace(/[^0-9]/g, ""))}
             placeholder="012345"
+            type="number"
             maxLength={6}
           />
           <Button onClick={login}>Submit</Button>
