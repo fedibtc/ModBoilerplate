@@ -160,13 +160,7 @@ const ButtonContent = styled(
       },
     },
   }),
-)(({ props: { className, loading, children, ...props }, ref, cn }) => {
-  return (
-    <div className={cn({ loading, className })} ref={ref} {...props}>
-      {children}
-    </div>
-  );
-});
+);
 
 const ButtonLoader = styled(
   "div",
@@ -180,8 +174,6 @@ const ButtonLoader = styled(
       },
     },
   ),
-)(({ props: { className, loading, ...props }, ref, cn }) => {
-  return <div className={cn({ loading, className })} ref={ref} {...props} />;
-});
+);
 
 export { Button };

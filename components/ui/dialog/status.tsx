@@ -94,18 +94,14 @@ export const DialogStatus: React.FC<DialogStatusProps> = ({
 const Container = styled(
   "div",
   cva("absolute inset-0 bg-white animate-fadeIn"),
-)(({ props: { className, ...props }, cn }) => (
-  <div {...props} className={cn({ className })} />
-));
+);
 
 const Content = styled(
   "div",
   cva(
     "absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[80%] max-w-[280px] aspect-square rounded-full z-[2] flex flex-col justify-center items-center text-center gap-sm bg-white",
   ),
-)(({ props: { className, ...props }, cn }) => (
-  <div {...props} className={cn({ className })} />
-));
+);
 
 const StatusBackground = styled(
   "div",
@@ -121,6 +117,4 @@ const StatusBackground = styled(
       },
     },
   ),
-)(({ props: { status, className, ...props }, cn }) => (
-  <div {...props} className={cn({ status, className })} />
-));
+);

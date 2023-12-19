@@ -1,4 +1,4 @@
-import { Infer, styled } from "@/components/ui/utils/styled";
+import { StyledProps, styled } from "@/components/ui/utils/styled";
 import { cva } from "class-variance-authority";
 
 /**
@@ -33,12 +33,6 @@ export const Text = styled(
       weight: "normal",
     },
   }),
-)(({ props: { className, variant, weight, ellipsize, ...props }, ref, cn }) => (
-  <div
-    className={cn({ variant, weight, ellipsize, className })}
-    {...props}
-    ref={ref}
-  />
-));
+);
 
-export type TextProps = Infer<typeof Text>;
+export type TextProps = StyledProps<typeof Text>;

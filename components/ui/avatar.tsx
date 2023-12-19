@@ -73,7 +73,7 @@ export const Avatar: React.FC<AvatarProps> = ({
 };
 
 const Root = styled(
-  "span",
+  RadixAvatar.Root,
   cva(
     "relative inline-flex justify-center items-center overflow-hidden bg-[var(--bg-color)]",
     {
@@ -115,25 +115,11 @@ const Root = styled(
       },
     },
   ),
-)(({ props: { size, shape, holo, className, ...props }, cn }) => (
-  <RadixAvatar.Root
-    {...props}
-    className={cn({ size, shape, holo, className })}
-  />
-));
+);
 
-const Image = styled(
-  "img",
-  cva("w-full h-ful object-cover"),
-  z.object({
-    onLoadingStatusChange: z.function(
-      z.tuple([z.enum(["idle", "loading", "loaded", "error"])]),
-      z.void(),
-    ),
-  }),
-)(({ props }) => <RadixAvatar.Image {...props} />);
+const Image = styled(RadixAvatar.Image, cva("w-full h-ful object-cover"));
 
 const Fallback = styled(
   "span",
   cva("fklex items-center justify-center pointer-events-none user-select-none"),
-)(({ props }) => <RadixAvatar.Fallback {...props} />);
+);

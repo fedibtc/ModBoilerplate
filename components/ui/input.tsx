@@ -74,9 +74,7 @@ const Container = styled(
       },
     },
   }),
-)(({ props: { width, className, ...props }, cn, ref }) => (
-  <label {...props} className={cn({ width, className })} ref={ref} />
-));
+);
 
 export const Label: React.FC<React.HTMLAttributes<HTMLDivElement>> = ({
   className,
@@ -98,15 +96,7 @@ const InputWrap = styled(
       },
     },
   ),
-)(({ props: { className, isFocused, isDisabled, ...props }, ref, cn }) => {
-  return (
-    <div
-      {...props}
-      ref={ref}
-      className={cn({ isFocused, isDisabled, className })}
-    />
-  );
-});
+);
 
 const TextInput = styled(
   "input",
@@ -124,6 +114,4 @@ const TextInput = styled(
       },
     },
   ),
-)(({ props: { textOverflow, className, ...props }, ref, cn }) => (
-  <input {...props} className={cn({ textOverflow, className })} ref={ref} />
-));
+);

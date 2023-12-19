@@ -1,12 +1,10 @@
 import { Text } from "@/components/ui/text";
-import { Infer, styled } from "@/components/ui/utils/styled";
+import { StyledProps, styled } from "@/components/ui/utils/styled";
 import { cn } from "@/lib/utils";
-import * as RadixLabel from "@radix-ui/react-label";
 import * as RadixRadio from "@radix-ui/react-radio-group";
 import { cva } from "class-variance-authority";
-import { z } from "zod";
 
-type TextProps = Infer<typeof Text>;
+type TextProps = StyledProps<typeof Text>;
 
 interface RadioOption<T extends string> {
   label: React.ReactNode;
@@ -32,7 +30,6 @@ export function RadioGroup<T extends string>({
   ...props
 }: RadioGroupProps<T>): React.ReactElement {
   return (
-    // @ts-expect-error Type param issue with Zod
     <Root onValueChange={onChange} {...props}>
       {options.map(({ value, label, disabled }) => (
         <Item key={value} disabled={props.disabled || disabled}>
@@ -54,23 +51,7 @@ export function RadioGroup<T extends string>({
   );
 }
 
-const Root = styled(
-  "div",
-  cva("flex flex-col gap-10"),
-  z.object({
-    name: z.string().optional(),
-    required: z.boolean().optional(),
-    disabled: z.boolean().optional(),
-    dir: z.enum(["ltr", "rtl"]).optional(),
-    orientation: z.enum(["horizontal", "vertical"]).optional(),
-    loop: z.boolean().optional(),
-    defaultValue: z.string().optional(),
-    value: z.string().optional(),
-    onValueChange: z.function(z.tuple([z.string()]), z.void()),
-  }),
-)(({ props: { className, ...props }, cn }) => (
-  <RadixRadio.Root {...props} className={cn({ className })} />
-));
+const Root = styled(RadixRadio.Root, cva("flex flex-col gap-10"));
 
 const Item = styled(
   "label",
@@ -81,22 +62,14 @@ const Item = styled(
       },
     },
   }),
-)(({ props: { className, ...props }, cn }) => (
-  <RadixLabel.Label {...props} className={cn({ className })} />
-));
+);
 
 const Radio = styled(
-  "button",
+  RadixRadio.Item,
   cva(
     "relative inline-flex items-center justify-center p-0 w-[22px] h-[22px] bg-white border-2 border-solid border-primary rounded-full cursor-pointer disabled:opacity-50 data-[disabled]:cursor-not-allowed data-[disabled]:cursor-not-allowed disabled:cursor-not-allowed",
   ),
-  z.object({
-    value: z.string(),
-    checked: z.boolean().optional(),
-  }),
-)(({ props: { className, value, ...props }, cn }) => (
-  <RadixRadio.Item {...props} value={value} className={cn({ className })} />
-));
+);
 
 const RadioIndicator: React.FC<React.HTMLAttributes<HTMLSpanElement>> = ({
   className,
@@ -120,6 +93,4 @@ const Label = styled(
       },
     },
   }),
-)(({ props: { className, disabled, ...props }, cn }) => (
-  <div {...props} className={cn({ disabled, className })} />
-));
+);
