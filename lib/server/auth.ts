@@ -39,16 +39,20 @@ export async function getBalance(): Promise<{
 }> {
   const user = await requireUserBySk({ balance: true });
 
-  if (!user.balance) {
-    const newBalance = await prisma?.balance.create({
-      data: {
-        userID: user.id,
-        balance: 0,
-      },
-    });
+  if (!user) {
+    throw new Error("User is required for getBalance");
+  }
 
-    if (newBalance) return { user, balance: newBalance };
-    else throw new Error("Could not create balance");
+  if (!user.balance) {
+    return {
+      balance: await prisma.balance.create({
+        data: {
+          userID: user.id,
+          balance: 0,
+        },
+      }),
+      user,
+    };
   }
 
   return { balance: user.balance, user };

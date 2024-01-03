@@ -1,6 +1,9 @@
 "use client";
 
-import { useAppState } from "@/components/providers/app-state-provider";
+import {
+  AppStateProvider,
+  useAppState,
+} from "@/components/providers/app-state-provider";
 import Conversation from "./conversation";
 import EmptyState from "./empty";
 import Container from "@/components/container";
@@ -14,7 +17,6 @@ import TopupDialog from "../topup";
 export default function Chat() {
   const { isLoading, error } = useNDKContext();
   const { isLoading: weblnLoading, error: weblnError } = useWebLNContext();
-  const { conversation } = useAppState();
 
   if (isLoading || weblnLoading) {
     return (
@@ -62,8 +64,20 @@ export default function Chat() {
   return (
     <>
       <Container className="divide-y divide-y-extraLightGrey items-stretch">
-        {conversation ? <Conversation /> : <EmptyState />}
+        <AppStateProvider>
+          <ConversationOrEmpty />
+        </AppStateProvider>
       </Container>
+    </>
+  );
+}
+
+function ConversationOrEmpty() {
+  const { conversation } = useAppState();
+
+  return (
+    <>
+      {conversation ? <Conversation /> : <EmptyState />}
       <TopupDialog />
     </>
   );

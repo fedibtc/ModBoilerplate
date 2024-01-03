@@ -4,6 +4,7 @@ import { v4 } from "uuid";
 import { cookies } from "next/headers";
 
 export async function GET(req: Request) {
+  cookies().delete("token");
   try {
     const { searchParams } = new URL(req.url);
 
