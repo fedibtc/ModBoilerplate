@@ -1,17 +1,11 @@
 import { getBalance } from "@/lib/server/auth";
+import { cookies } from "next/headers";
 
 export async function GET() {
-  try {
-    const { balance } = await getBalance();
+  const { balance } = await getBalance();
 
-    return Response.json({
-      success: true,
-      data: balance,
-    });
-  } catch (e) {
-    return Response.json({
-      success: false,
-      message: (e as Error).message,
-    });
-  }
+  return Response.json({
+    success: true,
+    data: balance,
+  });
 }
