@@ -5,24 +5,32 @@ import prisma from "./prisma";
 export async function requireUserBySk<T extends Prisma.UserInclude | null>(
   include?: T,
 ): Promise<Prisma.UserGetPayload<{ include: T }>> {
-  const sk = cookies().get("sk");
+  const token = cookies().get("token");
 
-  if (!sk?.value) {
-    throw new Error("No sk found");
+  if (!token?.value) {
+    throw new Error("No session token found");
   }
 
-  const user = await prisma.user.findFirst({
+  const session = await prisma.session.findFirst({
     where: {
-      privateKey: sk.value,
+      token: token.value,
     },
-    include,
+    include: {
+      user: {
+        include,
+      },
+    },
   });
 
-  if (!user) {
+  if (!session) {
+    throw new Error("No session found");
+  }
+
+  if (!session.user) {
     throw new Error("No user found");
   }
 
-  return user as Prisma.UserGetPayload<{ include: T }>;
+  return session.user as Prisma.UserGetPayload<{ include: T }>;
 }
 
 export async function getBalance(): Promise<{

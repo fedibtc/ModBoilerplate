@@ -1,3 +1,5 @@
+"use client";
+
 import { queryGet } from "@/lib/rest";
 import { Balance, Conversation, Message } from "@prisma/client";
 import { useQuery } from "@tanstack/react-query";

@@ -13,7 +13,7 @@
     "format": "prettier --ignore-path .gitignore --write \"**/*.{ts,tsx}\""
   },
   "dependencies": {
-    "@nostr-dev-kit/ndk": "^2.0.3",
+    "@nostr-dev-kit/ndk": "^2.3.2",
     "@prisma/client": "5.6.0",
     "@radix-ui/react-avatar": "^1.0.4",
     "@radix-ui/react-checkbox": "^1.0.4",
@@ -30,7 +30,7 @@
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.0.0",
     "next": "14.0.2",
-    "nostr-tools": "^1.17.0",
+    "nostr-tools": "latest",
     "openai": "^4.19.0",
     "prisma": "^5.6.0",
     "qr-scanner": "^1.4.2",
@@ -40,10 +40,13 @@
     "react-qr-code": "^2.0.12",
     "tailwind-merge": "^1.14.0",
     "tailwindcss-animate": "^1.0.7",
+    "uuid": "^9.0.1",
     "webln": "^0.3.2",
     "zod": "^3.22.4"
   },
   "devDependencies": {
+    "@types/web": "^0.0.133",
+    "@types/uuid": "^9.0.7",
     "@types/node": "^20.8.10",
     "@types/react": "^18",
     "@types/react-dom": "^18",

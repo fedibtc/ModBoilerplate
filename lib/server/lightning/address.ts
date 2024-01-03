@@ -34,6 +34,7 @@ export default class LnAddressUtil {
           Accept: "application/json",
         },
       },
+      // @ts-ignore
     ).then((r) => r.json());
   }
 
