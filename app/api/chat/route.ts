@@ -30,7 +30,7 @@ export async function POST(req: Request) {
       model: "gpt-3.5-turbo-1106",
       stream: true,
       messages,
-      max_tokens: tokensForSats(balance.balance),
+      max_tokens: Math.min(tokensForSats(balance.balance), 16386),
     });
 
     const last = messages.at(-1);
