@@ -31,8 +31,7 @@ export async function POST(req: Request) {
       stream: true,
       messages,
       max_tokens:
-        Math.min(tokensForSats(balance.balance), 16385) -
-        messages.at(-1).length,
+        Math.min(tokensForSats(balance.balance), 4096) - messages.at(-1).length,
     });
 
     const last = messages.at(-1);
