@@ -54,7 +54,7 @@ export async function POST(req: Request) {
           content: body.text,
         },
       ],
-      max_tokens: tokensForSats(balance.balance),
+      max_tokens: Math.min(tokensForSats(balance.balance), 16385),
     });
 
     const initialResponseText = initialResponse.choices[0].message.content;
