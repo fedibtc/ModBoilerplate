@@ -1,8 +1,7 @@
 import { Checkbox } from "@/components/ui/checkbox";
-import { StyledProps } from "@/components/ui/utils/styled";
-import { useCallback } from "react";
+import { ComponentProps, useCallback } from "react";
 
-type CheckboxProps = StyledProps<typeof Checkbox>;
+type CheckboxProps = ComponentProps<typeof Checkbox>;
 
 interface CheckboxOption<T extends string>
   extends Omit<CheckboxProps, "onChange" | "checked"> {

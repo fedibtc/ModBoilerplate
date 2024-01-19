@@ -1,8 +1,8 @@
 import Icon, { IconKey } from "@/components/ui/icon";
 import { Text } from "@/components/ui/text";
-import { styled } from "@/components/ui/utils/styled";
 import { cva } from "class-variance-authority";
 import { useEffect, useRef, useState } from "react";
+import { styled } from "react-tailwind-variants";
 
 export interface DialogStatusProps {
   status: "success" | "error" | "loading";
@@ -91,30 +91,21 @@ export const DialogStatus: React.FC<DialogStatusProps> = ({
   );
 };
 
-const Container = styled(
-  "div",
-  cva("absolute inset-0 bg-white animate-fadeIn"),
-);
+const Container = styled("div", {
+  base: "absolute inset-0 bg-white animate-fadeIn",
+});
 
-const Content = styled(
-  "div",
-  cva(
-    "absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[80%] max-w-[280px] aspect-square rounded-full z-[2] flex flex-col justify-center items-center text-center gap-sm bg-white",
-  ),
-);
+const Content = styled("div", {
+  base: "absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[80%] max-w-[280px] aspect-square rounded-full z-[2] flex flex-col justify-center items-center text-center gap-sm bg-white",
+});
 
-const StatusBackground = styled(
-  "div",
-  cva(
-    "absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[80%] max-w-[280px] aspect-square rounded-full z-[1] rotate-[var(--rotation)] scale-[var(--scale)] transition-all duration-500",
-    {
-      variants: {
-        status: {
-          success: "bg-holo-600",
-          error: "bg-extraLightGrey",
-          loading: "bg-holo-600 transition-none",
-        },
-      },
+const StatusBackground = styled("div", {
+  base: "absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[80%] max-w-[280px] aspect-square rounded-full z-[1] rotate-[var(--rotation)] scale-[var(--scale)] transition-all duration-500",
+  variants: {
+    status: {
+      success: "bg-holo-600",
+      error: "bg-extraLightGrey",
+      loading: "bg-holo-600 transition-none",
     },
-  ),
-);
+  },
+});

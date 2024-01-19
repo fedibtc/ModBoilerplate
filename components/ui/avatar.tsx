@@ -1,10 +1,10 @@
 import Icon, { IconKey } from "@/components/ui/icon";
 import stringUtils from "@/components/ui/utils/StringUtils";
 import { getIdentityColors } from "@/components/ui/utils/colors";
-import { styled } from "@/components/ui/utils/styled";
 import * as RadixAvatar from "@radix-ui/react-avatar";
 import { cva } from "class-variance-authority";
 import { useState } from "react";
+import { styled } from "react-tailwind-variants";
 import { z } from "zod";
 
 export interface AvatarProps {
@@ -72,54 +72,55 @@ export const Avatar: React.FC<AvatarProps> = ({
   );
 };
 
-const Root = styled(
-  RadixAvatar.Root,
-  cva(
-    "relative inline-flex justify-center items-center overflow-hidden bg-[var(--bg-color)]",
+const Root = styled(RadixAvatar.Root, {
+  base: "relative inline-flex justify-center items-center overflow-hidden bg-[var(--bg-color)]",
+
+  variants: {
+    size: {
+      xs: "w-20 h-20 text-[8px]",
+      sm: "w-[32px] h-[32px] text-tiny",
+      md: "w-xxl h-xxl text-body",
+      lg: "w-[88px] h-[88px] text-h2",
+    },
+    shape: {
+      circle: "rounded-full",
+      square: "rounded",
+    },
+    holo: {
+      true: "bg-holo-600",
+    },
+  },
+  compoundVariants: [
     {
       variants: {
-        size: {
-          xs: "w-20 h-20 text-[8px]",
-          sm: "w-[32px] h-[32px] text-tiny",
-          md: "w-xxl h-xxl text-body",
-          lg: "w-[88px] h-[88px] text-h2",
-        },
-        shape: {
-          circle: "rounded-full",
-          square: "rounded",
-        },
-        holo: {
-          true: "bg-holo-600",
-        },
+        size: "sm",
+        shape: "square",
       },
-      compoundVariants: [
-        {
-          size: "sm",
-          shape: "square",
-          className: "rounded",
-        },
-        {
-          size: "md",
-          shape: "square",
-          className: "rounded-md",
-        },
-        {
-          size: "lg",
-          shape: "square",
-          className: "rounded-lg",
-        },
-      ],
-      defaultVariants: {
-        size: "md",
-        shape: "circle",
-      },
+      className: "rounded",
     },
-  ),
-);
+    {
+      variants: {
+        size: "md",
+        shape: "square",
+      },
+      className: "rounded-md",
+    },
+    {
+      variants: {
+        size: "lg",
+        shape: "square",
+      },
+      className: "rounded-lg",
+    },
+  ],
+  defaultVariants: {
+    size: "md",
+    shape: "circle",
+  },
+});
 
-const Image = styled(RadixAvatar.Image, cva("w-full h-ful object-cover"));
+const Image = styled(RadixAvatar.Image, { base: "w-full h-ful object-cover" });
 
-const Fallback = styled(
-  "span",
-  cva("fklex items-center justify-center pointer-events-none user-select-none"),
-);
+const Fallback = styled("span", {
+  base: "fklex items-center justify-center pointer-events-none user-select-none",
+});

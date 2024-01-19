@@ -1,16 +1,17 @@
 import Icon from "@/components/ui/icon";
 import { Text } from "@/components/ui/text";
-import { StyledProps, styled } from "@/components/ui/utils/styled";
 import * as RadixCheckbox from "@radix-ui/react-checkbox";
 import * as RadixLabel from "@radix-ui/react-label";
 import { cva } from "class-variance-authority";
+import { ComponentProps } from "react";
+import { styled } from "react-tailwind-variants";
 
 export interface CheckboxProps {
   checked: boolean;
   defaultChecked?: boolean;
   disabled?: boolean;
   label?: React.ReactNode;
-  labelTextProps?: StyledProps<typeof Text>;
+  labelTextProps?: ComponentProps<typeof Text>;
   onChange?: (checked: boolean) => void;
 }
 
@@ -41,38 +42,28 @@ export const Checkbox: React.FC<CheckboxProps> = ({
   );
 };
 
-const Root = styled(
-  RadixLabel.Label,
-  cva("flex items-center gap-10 cursor-pointer", {
-    variants: {
-      disabled: {
-        true: "cursor-not-allowed",
-      },
+const Root = styled(RadixLabel.Label, {
+  base: "flex items-center gap-10 cursor-pointer",
+  variants: {
+    disabled: {
+      true: "cursor-not-allowed",
     },
-  }),
-);
+  },
+});
 
-export const CheckboxRoot = styled(
-  RadixCheckbox.Root,
-  cva(
-    "relative inline-flex justify-center items-center shrink-0 w-[22px] h-[22px] p-0 bg-white border-solid border-2 border-primary rounded cursor-pointer data-[state=checked]:bg-primary data-[disabled]:opacity-50 data-[disabled]:cursor-not-allowed disabled:opacity-50 disabled:cursor-not-allowed",
-  ),
-);
+export const CheckboxRoot = styled(RadixCheckbox.Root, {
+  base: "relative inline-flex justify-center items-center shrink-0 w-[22px] h-[22px] p-0 bg-white border-solid border-2 border-primary rounded cursor-pointer data-[state=checked]:bg-primary data-[disabled]:opacity-50 data-[disabled]:cursor-not-allowed disabled:opacity-50 disabled:cursor-not-allowed",
+});
 
-const CheckboxIndicator = styled(
-  RadixCheckbox.Indicator,
-  cva(
-    "block w-full h-full absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-white opacity-0 data-[state=checked]:opacity-100",
-  ),
-);
+const CheckboxIndicator = styled(RadixCheckbox.Indicator, {
+  base: "block w-full h-full absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-white opacity-0 data-[state=checked]:opacity-100",
+});
 
-const Label = styled(
-  "div",
-  cva("grow", {
-    variants: {
-      disabled: {
-        true: "opacity-50 cursor-not-allowed",
-      },
+const Label = styled("div", {
+  base: "grow",
+  variants: {
+    disabled: {
+      true: "opacity-50 cursor-not-allowed",
     },
-  }),
-);
+  },
+});

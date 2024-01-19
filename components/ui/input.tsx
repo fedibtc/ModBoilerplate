@@ -1,8 +1,8 @@
-import { styled } from "@/components/ui/utils/styled";
 import { cn } from "@/lib/utils";
 import { cva } from "class-variance-authority";
 import { useCallback, useState } from "react";
 import { Text } from "./text";
+import { styled } from "react-tailwind-variants";
 
 interface CustomProps {
   value: string;
@@ -64,54 +64,42 @@ export function Input({
   );
 }
 
-const Container = styled(
-  "label",
-  cva("inline-flex flex flex-col text-left", {
-    variants: {
-      width: {
-        auto: "w-auto",
-        full: "w-full",
-      },
+const Container = styled("label", {
+  base: "inline-flex flex flex-col text-left",
+  variants: {
+    width: {
+      auto: "w-auto",
+      full: "w-full",
     },
-  }),
-);
+  },
+});
 
 export const Label: React.FC<React.HTMLAttributes<HTMLDivElement>> = ({
   className,
   ...props
 }) => <div {...props} className={cn("pb-xs pl-[6px]", className)} />;
 
-const InputWrap = styled(
-  "div",
-  cva(
-    "inline-flex items-center h-xxl bg-white border-2 border-lightGrey rounded-lg transition-[border-color 80ms ease]",
-    {
-      variants: {
-        isFocused: {
-          true: "border-night",
-        },
-        isDisabled: {
-          true: "bg-extraLightGrey",
-        },
-      },
+const InputWrap = styled("div", {
+  base: "inline-flex items-center h-xxl bg-white border-2 border-lightGrey rounded-lg transition-[border-color 80ms ease]",
+  variants: {
+    isFocused: {
+      true: "border-night",
     },
-  ),
-);
+    isDisabled: {
+      true: "bg-extraLightGrey",
+    },
+  },
+});
 
-const TextInput = styled(
-  "input",
-  cva(
-    "grow min-w-[60px] h-full p-md border-0 bg-transparent focus:outline-0 active:outline-0 disabled:cursor-not-allowed placeholder:text-grey",
-    {
-      variants: {
-        textOverflow: {
-          clip: "text-clip",
-          ellipsis: "truncate",
-        },
-      },
-      defaultVariants: {
-        textOverflow: "clip",
-      },
+const TextInput = styled("input", {
+  base: "grow min-w-[60px] h-full p-md border-0 bg-transparent focus:outline-0 active:outline-0 disabled:cursor-not-allowed placeholder:text-grey",
+  variants: {
+    textOverflow: {
+      clip: "text-clip",
+      ellipsis: "truncate",
     },
-  ),
-);
+  },
+  defaultVariants: {
+    textOverflow: "clip",
+  },
+});

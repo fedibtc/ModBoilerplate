@@ -59,7 +59,7 @@ export default function Scanner({
         scannerRef.current = null;
       }
     })();
-  }, [scanning, ref]);
+  }, [scanning, ref, onError, onResult]);
 
   return (
     <video

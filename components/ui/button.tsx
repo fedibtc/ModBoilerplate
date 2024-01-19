@@ -1,9 +1,9 @@
 import Icon, { IconKey } from "@/components/ui/icon";
-import { styled } from "@/components/ui/utils/styled";
 import { cn } from "@/lib/utils";
 import { cva, type VariantProps } from "class-variance-authority";
 import Link, { LinkProps } from "next/link";
 import * as React from "react";
+import { styled } from "react-tailwind-variants";
 
 const buttonVariants = cva(
   "relative inline-flex justify-center items-center font-medium rounded-[40px] border-0 no-underline decoration-transparent decoration-0 cursor-pointer transition-button disabled:pointer-events-none",
@@ -151,29 +151,22 @@ const Button = React.forwardRef<HTMLButtonElement, Props>(
 );
 Button.displayName = "Button";
 
-const ButtonContent = styled(
-  "div",
-  cva("flex items-center gap-2 transition-[opacity 100ms ease]", {
-    variants: {
-      loading: {
-        true: "opacity-0",
-      },
+const ButtonContent = styled("div", {
+  base: "flex items-center gap-2 transition-[opacity 100ms ease]",
+  variants: {
+    loading: {
+      true: "opacity-0",
     },
-  }),
-);
+  },
+});
 
-const ButtonLoader = styled(
-  "div",
-  cva(
-    "absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none opacity-0",
-    {
-      variants: {
-        loading: {
-          true: "opacity-100",
-        },
-      },
+const ButtonLoader = styled("div", {
+  base: "absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none opacity-0",
+  variants: {
+    loading: {
+      true: "opacity-100",
     },
-  ),
-);
+  },
+});
 
 export { Button };
