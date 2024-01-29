@@ -26,12 +26,18 @@ export async function POST(req: Request) {
       throw new Error("Insufficient balance");
     }
 
+    let completionTokens =
+      tokensForSats(balance.balance) - messages.at(-1).length;
+
+    if (completionTokens <= 0) {
+      throw new Error("Insufficient balance");
+    }
+
     const response = await openai.chat.completions.create({
       model: "gpt-3.5-turbo-1106",
       stream: true,
       messages,
-      max_tokens:
-        Math.min(tokensForSats(balance.balance), 4096) - messages.at(-1).length,
+      max_tokens: completionTokens,
     });
 
     const last = messages.at(-1);
@@ -60,7 +66,7 @@ export async function POST(req: Request) {
             id: balance.id,
           },
           data: {
-            balance: balance.balance - satsForTokens(tokens),
+            balance: Math.max(balance.balance - satsForTokens(tokens), 0),
           },
         });
       },

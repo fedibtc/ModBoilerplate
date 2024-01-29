@@ -69,6 +69,15 @@ export function NostrProvider({ children }: { children: React.ReactNode }) {
 
         if (!res.success) throw new Error(res.message);
 
+        console.log(res);
+
+        if (res.data.user) {
+          setData({ user: res.data.user });
+          setIsLoading(false);
+          setError(null);
+          return;
+        }
+
         const {
           data: { refreshToken },
         }: { data: { refreshToken: string } } = res;

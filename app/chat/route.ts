@@ -39,6 +39,12 @@ export async function POST(req: Request) {
       throw new Error("Failed to generate a title");
     }
 
+    const completionTokens = tokensForSats(balance.balance) - body.text.length;
+
+    if (completionTokens <= 0) {
+      throw new Error("Insufficient balance");
+    }
+
     const convo = await prisma.conversation.create({
       data: {
         userID: user.id,
@@ -54,8 +60,7 @@ export async function POST(req: Request) {
           content: body.text,
         },
       ],
-      max_tokens:
-        Math.min(tokensForSats(balance.balance), 4096) - body.text.length,
+      max_tokens: completionTokens,
     });
 
     const initialResponseText = initialResponse.choices[0].message.content;
@@ -69,9 +74,11 @@ export async function POST(req: Request) {
         id: balance.id,
       },
       data: {
-        balance:
+        balance: Math.max(
           balance.balance -
-          satsForTokens(initialResponse.usage?.completion_tokens ?? 1),
+            satsForTokens(initialResponse.usage?.completion_tokens ?? 1),
+          0,
+        ),
       },
     });
 

@@ -4,7 +4,6 @@ import { v4 } from "uuid";
 import { cookies } from "next/headers";
 
 export async function GET(req: Request) {
-  cookies().delete("token");
   try {
     const { searchParams } = new URL(req.url);
 
@@ -12,6 +11,32 @@ export async function GET(req: Request) {
 
     if (!pk) throw new Error("Public key not provided");
     if (!/^[a-f0-9]{64}$/i.test(pk)) throw new Error("Invalid public key");
+
+    const token = cookies().get("token");
+
+    const activeUserSession = await prisma.session.findFirst({
+      where: {
+        token: token?.value,
+      },
+      include: {
+        user: true,
+      },
+    });
+
+    if (
+      activeUserSession &&
+      token?.value &&
+      activeUserSession.user.pubkey === pk
+    ) {
+      return Response.json({
+        success: true,
+        data: {
+          user: activeUserSession.user,
+        },
+      });
+    } else {
+      cookies().delete("token");
+    }
 
     let sigToken: string;
 
