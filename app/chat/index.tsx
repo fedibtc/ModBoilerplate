@@ -8,10 +8,7 @@ import Conversation from "./conversation";
 import EmptyState from "./empty";
 import Container from "@/components/container";
 import { useNDKContext } from "@/components/providers/nostr-provider";
-import { useWebLNContext } from "@/components/providers/webln-provider";
-import { Button } from "@/components/ui/button";
-import Icon from "@/components/ui/icon";
-import { Text } from "@/components/ui/text";
+import { Button, Icon, Text, useWebLNContext } from "@fedibtc/ui";
 import TopupDialog from "../topup";
 
 export default function Chat() {
@@ -24,7 +21,7 @@ export default function Chat() {
         <Icon
           icon="IconLoader2"
           size="xl"
-          className="animate-load text-lightGrey"
+          className="animate-spin text-lightGrey"
         />
         <Text>
           {weblnLoading ? "Initializing WebLN..." : "Initializing Nostr..."}

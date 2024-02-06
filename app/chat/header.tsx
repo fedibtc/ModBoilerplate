@@ -1,6 +1,5 @@
 import { useAppState } from "@/components/providers/app-state-provider";
-import Icon from "@/components/ui/icon";
-import { Text } from "@/components/ui/text";
+import { Text, Icon } from "@fedibtc/ui";
 import { mutateWithBody } from "@/lib/rest";
 import { useMutation } from "@tanstack/react-query";
 

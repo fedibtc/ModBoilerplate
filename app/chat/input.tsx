@@ -1,6 +1,5 @@
 import { useAppState } from "@/components/providers/app-state-provider";
-import Icon from "@/components/ui/icon";
-import { Text } from "@/components/ui/text";
+import { Text, Icon } from "@fedibtc/ui";
 import { minSats } from "@/lib/constants";
 
 export default function ChatInput({
@@ -36,12 +35,12 @@ export default function ChatInput({
         onClick={typeof onSubmit !== "undefined" ? () => onSubmit() : undefined}
         type={typeof onSubmit !== "undefined" ? "button" : "submit"}
         disabled={loading}
-        className="bg-blue rounded-full w-8 h-8 p-1 flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed shrink-0"
+        className="!bg-blue rounded-full w-8 h-8 p-1 flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed shrink-0"
       >
         <Icon
           icon={loading ? "IconLoader2" : "IconArrowUp"}
           size="sm"
-          className={"text-white" + (loading ? " animate-load" : "")}
+          className={"text-white" + (loading ? " animate-spin" : "")}
           stroke={3}
         />
       </button>

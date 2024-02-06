@@ -1,4 +1,4 @@
-import { Text } from "@/components/ui/text";
+import { Text } from "@fedibtc/ui";
 import { Message as AIMessage } from "ai";
 
 export default function Message({
@@ -20,8 +20,8 @@ export default function Message({
         <div
           className={`p-2 rounded-xl ${
             isSystem
-              ? "bg-green/10 rounded-bl-[4px]"
-              : "bg-blue/10 rounded-br-[4px]"
+              ? "bg-green/10 !rounded-bl-[4px]"
+              : "bg-blue/10 !rounded-br-[4px]"
           } ${loading ? "animate-pulse" : ""}`}
         >
           <Text

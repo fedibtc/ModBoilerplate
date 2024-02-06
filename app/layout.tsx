@@ -1,8 +1,9 @@
 import QueryClientProvider from "@/components/providers/query-client-provider";
-import { Toaster } from "@/components/ui/toaster";
 import { Metadata } from "next";
 import { Analytics } from "@vercel/analytics/react";
 import "./globals.css";
+import "@fedibtc/ui/dist/index.css";
+import { Toaster } from "@fedibtc/ui";
 
 export const metadata: Metadata = {
   title: "LnGPT " + (process.env.NODE_ENV === "development" ? "🛠️" : "⚡️"),

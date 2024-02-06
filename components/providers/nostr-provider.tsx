@@ -116,6 +116,7 @@ export function NostrProvider({ children }: { children: React.ReactNode }) {
           setError(null);
         }
       } catch (e) {
+        console.log(e);
         setError(e as Error);
         setIsLoading(false);
       }

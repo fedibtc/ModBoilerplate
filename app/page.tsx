@@ -1,8 +1,8 @@
 import { NostrProvider } from "@/components/providers/nostr-provider";
-import { WebLNProvider } from "@/components/providers/webln-provider";
+import { WebLNProvider } from "@fedibtc/ui";
 import Chat from "./chat";
 
-export default async function Index() {
+export default function Index() {
   return (
     <NostrProvider>
       <WebLNProvider>

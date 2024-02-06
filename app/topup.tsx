@@ -1,10 +1,12 @@
 import { useAppState } from "@/components/providers/app-state-provider";
-import { useWebLN } from "@/components/providers/webln-provider";
-import { Button } from "@/components/ui/button";
-import { Dialog } from "@/components/ui/dialog";
-import { DialogStatus } from "@/components/ui/dialog/status";
-import { useToast } from "@/components/ui/hooks/use-toast";
-import { Input } from "@/components/ui/input";
+import {
+  useWebLN,
+  Button,
+  Dialog,
+  DialogStatus,
+  useToast,
+  Input,
+} from "@fedibtc/ui";
 import { mutateWithBody } from "@/lib/rest";
 import { CreateInvoiceResponse } from "@/lib/server/lightning/address";
 import { useMutation } from "@tanstack/react-query";

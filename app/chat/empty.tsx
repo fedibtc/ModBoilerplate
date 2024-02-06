@@ -4,10 +4,7 @@ import {
   ConversationWithMessages,
   useAppState,
 } from "@/components/providers/app-state-provider";
-import { Button } from "@/components/ui/button";
-import { useToast } from "@/components/ui/hooks/use-toast";
-import Icon from "@/components/ui/icon";
-import { Text } from "@/components/ui/text";
+import { Button, useToast, Icon, Text } from "@fedibtc/ui";
 import { mutateWithBody, queryGet } from "@/lib/rest";
 import { Conversation } from "@prisma/client";
 import { useMutation, useQuery } from "@tanstack/react-query";
