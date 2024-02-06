@@ -60,7 +60,7 @@ export default function EmptyState() {
         <div className="flex flex-col gap-sm grow p-sm">
           <div className="flex gap-sm justify-between items-center border-b border-extraLightGrey pb-sm">
             <Text variant="h2" weight="bolder">
-              LnGPT
+              AI Assistant
             </Text>
             <div className="flex gap-sm items-center">
               <Text>{balance?.balance} sats</Text>
@@ -92,7 +92,7 @@ export default function EmptyState() {
       ) : (
         <div className="grow flex flex-col gap-sm justify-center items-center">
           <Text variant="h1" weight="bolder">
-            LnGPT
+            AI Assistant
           </Text>
           <Text>Chats for Sats ⚡️</Text>
           <Text>Balance: {balance?.balance} sats</Text>

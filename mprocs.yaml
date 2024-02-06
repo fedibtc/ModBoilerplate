@@ -1,0 +1,11 @@
+procs:
+  user:
+    shell: zsh
+    stop: SIGKILL
+  next-dev:
+    shell: bun i && bun dev
+  docker-postgres:
+    shell: docker-compose up
+    stop: SIGKILL
+  prisma-studio:
+    shell: bun prisma studio --browser none

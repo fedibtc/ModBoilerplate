@@ -6,7 +6,8 @@ import "@fedibtc/ui/dist/index.css";
 import { Toaster } from "@fedibtc/ui";
 
 export const metadata: Metadata = {
-  title: "LnGPT " + (process.env.NODE_ENV === "development" ? "🛠️" : "⚡️"),
+  title:
+    "AI Assistant " + (process.env.NODE_ENV === "development" ? "🛠️" : "⚡️"),
   description: "Sats for Chats",
   icons: {
     icon: "/favicon.ico",
