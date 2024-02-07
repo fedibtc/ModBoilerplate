@@ -1,0 +1,10 @@
+procs:
+  user:
+    shell: zsh
+    stop: SIGKILL
+  multispend:
+    shell: bun i && bun dev
+  prisma-studio:
+    shell: bun prisma studio --browser none
+  docker-postgres:
+    shell: docker-compose up

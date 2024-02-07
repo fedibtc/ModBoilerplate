@@ -1,5 +1,7 @@
 import QueryClientProvider from "@/components/providers/query-client-provider";
-import { Toaster } from "@/components/ui/toaster";
+import { Toaster } from "@fedibtc/ui";
+import "@fedibtc/ui/dist/index.css";
+import { Analytics } from "@vercel/analytics/react";
 import { Metadata } from "next";
 import "./globals.css";
 
@@ -9,6 +11,12 @@ export const metadata: Metadata = {
   icons: {
     icon: "/favicon.ico",
   },
+};
+
+export const viewport = {
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 1,
 };
 
 export default function RootLayout({
@@ -23,6 +31,7 @@ export default function RootLayout({
           {children}
           <Toaster />
         </QueryClientProvider>
+        <Analytics />
       </body>
     </html>
   );

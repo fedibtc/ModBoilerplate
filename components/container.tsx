@@ -1,11 +1,28 @@
-export default function Container({ children }: { children: React.ReactNode }) {
+import { ComponentProps } from "react";
+import { styled } from "react-tailwind-variants";
+
+export default function Container(
+  props: ComponentProps<typeof ContainerInner>,
+) {
   return (
-    <div className="w-full min-h-screen bg-holo-400 flex justify-center">
-      <div className="min-h-full max-w-[480px] w-full flex flex-col gap-lg justify-center p-lg grow">
-        <div className="bg-white p-xl rounded-lg flex flex-col gap-lg grow items-center box-shadow-lg">
-          {children}
-        </div>
-      </div>
-    </div>
+    <ContainerOuter>
+      <ContainerInner {...props} />
+    </ContainerOuter>
   );
 }
+
+const ContainerOuter = styled("div", {
+  base: "w-full flex flex-col items-center justify-center min-h-screen",
+});
+
+const ContainerInner = styled("div", {
+  base: "flex flex-col gap-lg items-center justify-center grow w-full max-w-[480px]",
+  variants: {
+    center: {
+      true: "h-full",
+    },
+  },
+  defaultVariants: {
+    center: false,
+  },
+});

@@ -6,7 +6,7 @@
 .pnp.js
 
 # postgres / docker
-data/
+.data/
 
 # testing
 /coverage

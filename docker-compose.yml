@@ -5,10 +5,10 @@ services:
     image: postgres
     restart: always
     environment:
-      POSTGRES_PASSWORD: abc123
+      POSTGRES_PASSWORD: password
       POSTGRES_USER: fedi
-      POSTGRES_DB: fedi
+      POSTGRES_DB: database
     ports:
-      - "5432:5432"
+      - "25432:5432"
     volumes:
-      - ./data:/var/lib/postgresql/data
+      - ./.data:/var/lib/postgresql/data

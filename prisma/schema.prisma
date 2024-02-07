@@ -9,18 +9,3 @@ datasource db {
   provider  = "postgresql"
   url       = env("POSTGRES_URL")
 }
-
-model Invoice {
-  id             Int      @id @default(autoincrement())
-  paymentRequest String
-  data           String?
-  createdAt      DateTime @default(now())
-  updatedAt      DateTime @updatedAt
-  status         InvoiceStatus @default(PENDING)
-} 
-
-enum InvoiceStatus {
-  PENDING
-  PAID
-  EXPIRED
-}
