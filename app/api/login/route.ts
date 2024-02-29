@@ -16,18 +16,14 @@ export async function GET(req: Request) {
 
     const activeUserSession = await prisma.session.findFirst({
       where: {
-        token: token?.value,
+        token: token?.value || "",
       },
       include: {
         user: true,
       },
     });
 
-    if (
-      activeUserSession &&
-      token?.value &&
-      activeUserSession.user.pubkey === pk
-    ) {
+    if (activeUserSession && activeUserSession.user.pubkey === pk) {
       return Response.json({
         success: true,
         data: {
@@ -117,7 +113,11 @@ export async function POST(req: Request) {
 
     if (!session) throw new Error("No session found");
 
-    if (session.sigToken !== evt.content.split(": ")[1])
+    const challengeTag = evt.tags.find((tag) => tag[0] === "challenge");
+
+    if (!challengeTag) throw new Error("No challenge tag found");
+
+    if (session.sigToken !== challengeTag[1])
       throw new Error("Invalid signature");
 
     cookies().set("token", session.token);

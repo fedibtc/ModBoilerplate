@@ -83,10 +83,10 @@ export function NostrProvider({ children }: { children: React.ReactNode }) {
         }: { data: { refreshToken: string } } = res;
 
         const evt: UnsignedEvent = {
-          kind: 1,
+          kind: 22242,
           created_at: Math.floor(Date.now() / 1000),
-          tags: [],
-          content: "Please sign this text to log in: " + refreshToken,
+          tags: [["challenge", refreshToken]],
+          content: "Log into AI Assistant",
           pubkey,
         };
 
