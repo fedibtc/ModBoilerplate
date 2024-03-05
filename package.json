@@ -13,8 +13,8 @@
     "format": "prettier --ignore-path .gitignore --write \"**/*.{ts,tsx}\""
   },
   "dependencies": {
-    "@fedibtc/tailwind-theme": "^1.0.0",
-    "@fedibtc/ui": "^1.0.6",
+    "@fedibtc/tailwind-theme": "^1.0.3",
+    "@fedibtc/ui": "^1.1.0",
     "@nostr-dev-kit/ndk": "^2.3.2",
     "@prisma/client": "5.6.0",
     "@radix-ui/react-avatar": "^1.0.4",

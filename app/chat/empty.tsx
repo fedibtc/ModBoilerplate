@@ -17,7 +17,7 @@ export default function EmptyState() {
   const { balance, refetchBalance, setConversation, setTopupDialog } =
     useAppState();
 
-  const { toast } = useToast();
+  const toast = useToast();
 
   const { mutate: createConversation, isPending: createConversationLoading } =
     useMutation({
@@ -29,9 +29,7 @@ export default function EmptyState() {
         setConversation(data);
       },
       onError: (err) => {
-        toast({
-          content: err.message,
-        });
+        toast.error(err);
       },
     });
 

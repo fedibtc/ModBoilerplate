@@ -3,7 +3,7 @@ import { Metadata } from "next";
 import { Analytics } from "@vercel/analytics/react";
 import "./globals.css";
 import "@fedibtc/ui/dist/index.css";
-import { Toaster } from "@fedibtc/ui";
+import { ToastProvider } from "@fedibtc/ui";
 
 export const metadata: Metadata = {
   title:
@@ -28,10 +28,9 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body>
-        <QueryClientProvider>
-          {children}
-          <Toaster />
-        </QueryClientProvider>
+        <ToastProvider>
+          <QueryClientProvider>{children}</QueryClientProvider>
+        </ToastProvider>
         <Analytics />
       </body>
     </html>

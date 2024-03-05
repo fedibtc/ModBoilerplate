@@ -18,7 +18,7 @@ export default function TopupDialog() {
   const [paymentPending, setPaymentPending] = useState(false);
 
   const webln = useWebLN();
-  const { toast } = useToast();
+  const toast = useToast();
 
   const {
     mutate: updateBalance,
@@ -42,9 +42,7 @@ export default function TopupDialog() {
       }, 2000);
     },
     onError: (err) => {
-      toast({
-        content: err.message,
-      });
+      toast.error(err);
     },
   });
 
@@ -64,9 +62,7 @@ export default function TopupDialog() {
       updateBalance(data.pr);
     },
     onError: (err) => {
-      toast({
-        content: err.message,
-      });
+      toast.error(err);
     },
   });
 
