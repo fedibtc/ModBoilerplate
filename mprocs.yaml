@@ -6,6 +6,12 @@ procs:
     shell: bun i && bun dev
   docker-postgres:
     shell: docker-compose up
-    stop: SIGKILL
+    stop: 
+      send-keys: 
+        - "<C-c>"
   prisma-studio:
     shell: bun prisma studio --browser none
+  fedimint-http-client:
+    shell: cd ../fedimint-clientd && cargo run
+    stop: SIGTERM
+

@@ -32,15 +32,6 @@ enum Role {
   USER
 }
 
-model Invoice {
-  id          Int      @id @default(autoincrement())
-  paymentHash String   @unique
-  verifyUrl   String?
-  timeCreated DateTime @default(now())
-  user        User     @relation(fields: [userID], references: [id])
-  userID      Int
-}
-
 model Balance {
   id      Int  @id @default(autoincrement())
   userID  Int  @unique
@@ -53,7 +44,6 @@ model User {
   pubkey        String
   timeCreated   DateTime       @default(now())
   balance       Balance?
-  invoices      Invoice[]
   conversations Conversation[]
   session       Session?
 }

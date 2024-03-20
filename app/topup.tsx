@@ -1,72 +1,64 @@
+"use client";
+
 import { useAppState } from "@/components/providers/app-state-provider";
-import {
-  useWebLN,
-  Button,
-  Dialog,
-  DialogStatus,
-  useToast,
-  Input,
-} from "@fedibtc/ui";
-import { mutateWithBody } from "@/lib/rest";
-import { CreateInvoiceResponse } from "@/lib/server/lightning/address";
-import { useMutation } from "@tanstack/react-query";
-import { useState } from "react";
+import { formatError } from "@/lib/errors";
+import { Button, Dialog, DialogStatus, Input, useWebLN } from "@fedibtc/ui";
+import { useEffect, useState } from "react";
+import { createLnInvoice } from "./actions/create-ln-invoice";
+import { topup } from "./actions/topup";
 
 export default function TopupDialog() {
   const { topupDialog, setTopupDialog, refetchBalance } = useAppState();
   const [amount, setAmount] = useState(0);
   const [paymentPending, setPaymentPending] = useState(false);
 
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [isIdle, setIsIdle] = useState(true);
+
   const webln = useWebLN();
-  const toast = useToast();
 
-  const {
-    mutate: updateBalance,
-    error: bError,
-    isIdle,
-    reset: resetAwaitInvoiceMutation,
-  } = useMutation({
-    mutationFn: (invoice: string) =>
-      mutateWithBody<{
-        amount: number;
-        invoice: string;
-      }>("/invoice", { invoice }, "PUT"),
-    onSuccess: async () => {
-      refetchBalance();
-      setPaymentPending(false);
-      setTimeout(() => {
-        resetAwaitInvoiceMutation();
-        resetCreateTopupInvoiceMutation();
-        setAmount(0);
-        setTopupDialog(false);
-      }, 2000);
-    },
-    onError: (err) => {
-      toast.error(err);
-    },
-  });
-
-  const {
-    mutate: topup,
-    isPending,
-    error,
-    reset: resetCreateTopupInvoiceMutation,
-  } = useMutation({
-    mutationFn: () =>
-      mutateWithBody<CreateInvoiceResponse>("/invoice", {
+  const handleTopup = async () => {
+    setIsIdle(false);
+    setIsLoading(true);
+    setPaymentPending(true);
+    try {
+      const prRes = await createLnInvoice({
         amount,
-      }),
-    onSuccess: async (data) => {
-      setPaymentPending(true);
-      await webln.sendPayment(data.pr);
-      updateBalance(data.pr);
-    },
-    onError: (err) => {
-      toast.error(err);
-    },
-  });
+      });
 
-  const unifiedError = error || bError;
+      if (!prRes.success) throw new Error(prRes.message);
+
+      await webln.sendPayment(prRes.data.invoice);
+
+      setPaymentPending(false);
+
+      const topupRes = await topup({
+        invoice: prRes.data.invoice,
+      });
+
+      if (!topupRes.success) throw new Error(topupRes.message);
+
+      refetchBalance();
+
+      setTimeout(() => {
+        setTopupDialog(false);
+      }, 3000);
+    } catch (e) {
+      setError(formatError(e));
+    } finally {
+      setPaymentPending(false);
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    setAmount(0);
+    setPaymentPending(false);
+    setIsLoading(false);
+    setError(null);
+    setIsIdle(true);
+  }, [topupDialog]);
 
   return (
     <Dialog
@@ -108,29 +100,18 @@ export default function TopupDialog() {
             1000
           </Button>
         </div>
-        <Button onClick={() => topup()} loading={isPending}>
+        <Button onClick={handleTopup} loading={isLoading}>
           Submit
         </Button>
       </div>
 
       {isIdle ? null : (
         <DialogStatus
-          status={
-            unifiedError ? "error" : paymentPending ? "loading" : "success"
-          }
-          title={
-            unifiedError
-              ? unifiedError?.message
-              : paymentPending
-                ? "Loading..."
-                : "Success!"
-          }
+          status={error ? "error" : paymentPending ? "loading" : "success"}
+          title={error || (paymentPending ? "Loading..." : "Success!")}
           description={
-            unifiedError
-              ? unifiedError.message
-              : paymentPending
-                ? "Waiting for payment..."
-                : "Topup Successful"
+            error ||
+            (paymentPending ? "Waiting for payment..." : "Topup Successful")
           }
         />
       )}

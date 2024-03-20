@@ -1,5 +1,5 @@
-import type { Config } from "tailwindcss";
 import plugin from "@fedibtc/tailwind-theme";
+import type { Config } from "tailwindcss";
 
 const config: Config = {
   content: [

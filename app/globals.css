@@ -1,3 +1,16 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+.markdown {
+  @apply flex flex-col gap-2;
+
+  ul,
+  li {
+    @apply list-inside px-2;
+  }
+
+  li {
+    @apply list-disc;
+  }
+}

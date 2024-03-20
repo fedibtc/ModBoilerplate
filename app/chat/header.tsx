@@ -1,35 +1,39 @@
 import { useAppState } from "@/components/providers/app-state-provider";
-import { Text, Icon } from "@fedibtc/ui";
-import { mutateWithBody } from "@/lib/rest";
-import { useMutation } from "@tanstack/react-query";
+import { Icon, Text, useToast } from "@fedibtc/ui";
+import { useState } from "react";
+import { deleteChat } from "./actions/delete";
 
 export default function Header() {
   const { conversation, setConversation, balance } = useAppState();
 
-  const { mutate, isPending } = useMutation({
-    mutationFn: () =>
-      mutateWithBody<void>(
-        "/chat",
-        {
-          conversationId: conversation!.id,
-        },
-        "DELETE",
-      ),
-    onSuccess: () => {
-      setConversation(null);
-    },
-    onError: () => {
-      alert("Failed to delete conversation");
-    },
-  });
+  const [deleteChatPending, setDeleteChatPending] = useState(false);
 
-  const deleteConversation = () => {
+  const toast = useToast();
+
+  const deleteConversation = async () => {
+    if (!conversation) return;
+
     const shouldDelete = confirm(
       "Are you sure you want to delete this conversation?",
     );
 
     if (shouldDelete) {
-      mutate();
+      setDeleteChatPending(true);
+
+      const res = await deleteChat({
+        conversationId: conversation.id,
+      });
+
+      if (!res.success) {
+        toast.show({
+          content: res.message,
+          status: "error",
+        });
+      } else {
+        setConversation(null);
+      }
+
+      setDeleteChatPending(false);
     }
   };
 
@@ -52,8 +56,8 @@ export default function Header() {
         onClick={deleteConversation}
       >
         <Icon
-          icon={isPending ? "IconLoader2" : "IconTrash"}
-          className={isPending ? "animate-load" : ""}
+          icon={deleteChatPending ? "IconLoader2" : "IconTrash"}
+          className={deleteChatPending ? "animate-load" : ""}
         />
       </button>
     </div>

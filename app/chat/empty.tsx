@@ -1,43 +1,149 @@
 "use client";
 
-import {
-  ConversationWithMessages,
-  useAppState,
-} from "@/components/providers/app-state-provider";
-import { Button, useToast, Icon, Text } from "@fedibtc/ui";
-import { mutateWithBody, queryGet } from "@/lib/rest";
+import { useAppState } from "@/components/providers/app-state-provider";
+import { queryGet } from "@/lib/rest";
+import { Button, Icon, Text, useToast, useWebLN } from "@fedibtc/ui";
 import { Conversation } from "@prisma/client";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
+import { depositEcash } from "../actions/topup-ecash";
+import { redeemLighting } from "../actions/withdraw";
+import { createChat } from "./actions/create";
 import ChatInput from "./input";
+
+declare global {
+  interface Window {
+    fediInternal?: {
+      generateEcash(amountMsat: {
+        amount?: string | number;
+        defaultAmount?: string | number;
+        minimumAmount?: string | number;
+        maximumAmount?: string | number;
+      }): Promise<string>;
+      receiveEcash(ecash: string): Promise<string>;
+      getActiveFederation(): Promise<{
+        id: string;
+        name: string;
+        network: "signet" | "bitcoin";
+      }>;
+      getAuthenticatedMember(): Promise<{
+        id: string;
+        username: string;
+      }>;
+    };
+  }
+}
 
 export default function EmptyState() {
   const [value, setValue] = useState("");
+  const [depositLoading, setDepositLoading] = useState(false);
+  const [withdrawLoading, setWithdrawLoading] = useState(false);
+  const [isCreatingConversation, setIsCreatingConversation] = useState(false);
 
   const { balance, refetchBalance, setConversation, setTopupDialog } =
     useAppState();
 
   const toast = useToast();
+  const webln = useWebLN();
 
-  const { mutate: createConversation, isPending: createConversationLoading } =
-    useMutation({
-      mutationFn: (text: string) =>
-        mutateWithBody<ConversationWithMessages>("/chat", {
-          text,
-        }),
-      onSuccess: (data) => {
-        setConversation(data);
-      },
-      onError: (err) => {
-        toast.error(err);
-      },
-    });
+  const handleCreateConversation = async (text: string) => {
+    setIsCreatingConversation(true);
+
+    const res = await createChat({ text });
+
+    if (!res.success) {
+      throw new Error(res.message);
+    }
+
+    setConversation(res.data);
+    setIsCreatingConversation(false);
+  };
 
   const { data: conversations, isLoading } = useQuery({
     queryKey: ["conversations"],
     queryFn: () => queryGet<Array<Conversation>>("/chat"),
     retry: false,
   });
+
+  const handleTopup = async () => {
+    if ("fediInternal" in window) {
+      setDepositLoading(true);
+      try {
+        let ecashNotes: string | undefined;
+
+        try {
+          ecashNotes = await window.fediInternal?.generateEcash({
+            minimumAmount: 1,
+          });
+        } catch {
+          /* no-op */
+        }
+
+        if (!ecashNotes) return;
+
+        const res = await depositEcash({
+          notes: ecashNotes,
+        });
+
+        if (!res.success) throw new Error(res.message);
+
+        toast.show({
+          content: `Successfully deposited ${res.amount} sats`,
+          status: "success",
+        });
+
+        refetchBalance();
+      } catch (e) {
+        toast.error(e);
+      } finally {
+        setDepositLoading(false);
+      }
+    } else {
+      setTopupDialog(true);
+    }
+  };
+
+  const handleWithdraw = async () => {
+    if (!balance?.balance) return;
+
+    setWithdrawLoading(true);
+
+    try {
+      let paymentRequest: string | undefined;
+
+      try {
+        const invoice = await webln.makeInvoice({
+          minimumAmount: 1,
+          maximumAmount: balance?.balance,
+        });
+
+        paymentRequest = invoice.paymentRequest;
+      } catch {
+        /* no-op */
+      }
+
+      if (!paymentRequest) return;
+
+      const res = await redeemLighting({
+        invoice: paymentRequest,
+      });
+
+      if (!res.success) {
+        throw new Error(res.message);
+      }
+
+      toast.show({
+        content: `Successfully withdrew ${res.amount} sats`,
+        status: "success",
+      });
+
+      refetchBalance();
+    } catch (e) {
+      toast.error(e);
+    } finally {
+      setWithdrawLoading(false);
+    }
+  };
 
   useEffect(() => {
     refetchBalance();
@@ -57,13 +163,18 @@ export default function EmptyState() {
       ) : (conversations?.length ?? 0) > 0 ? (
         <div className="flex flex-col gap-sm grow p-sm">
           <div className="flex gap-sm justify-between items-center border-b border-extraLightGrey pb-sm">
-            <Text variant="h2" weight="bolder">
-              AI Assistant
-            </Text>
+            <Text>{balance?.balance} sats</Text>
             <div className="flex gap-sm items-center">
-              <Text>{balance?.balance} sats</Text>
-              <Button size="sm" onClick={() => setTopupDialog(true)}>
+              <Button size="sm" onClick={handleTopup} loading={depositLoading}>
                 Topup
+              </Button>
+              <Button
+                size="sm"
+                onClick={handleWithdraw}
+                loading={withdrawLoading}
+                disabled={!balance?.balance}
+              >
+                Withdraw
               </Button>
             </div>
           </div>
@@ -94,13 +205,15 @@ export default function EmptyState() {
           </Text>
           <Text>Chats for Sats ⚡️</Text>
           <Text>Balance: {balance?.balance} sats</Text>
-          <Button onClick={() => setTopupDialog(true)}>Topup</Button>
+          <Button onClick={handleTopup} loading={depositLoading}>
+            Topup
+          </Button>
         </div>
       )}
       <form
         onSubmit={(e) => {
           e.preventDefault();
-          createConversation(value);
+          handleCreateConversation(value);
         }}
       >
         <ChatInput
@@ -111,7 +224,7 @@ export default function EmptyState() {
               : "Start a conversation..."
           }
           onChange={(e) => setValue(e.target.value)}
-          loading={createConversationLoading}
+          loading={isCreatingConversation}
         />
       </form>
     </>

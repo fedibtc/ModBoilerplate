@@ -1,9 +1,11 @@
+import Fallback from "@/components/fallback";
+import { AuthProvider } from "@/components/providers/auth-provider";
 import QueryClientProvider from "@/components/providers/query-client-provider";
-import { Metadata } from "next";
-import { Analytics } from "@vercel/analytics/react";
-import "./globals.css";
+import { NostrProvider, ToastProvider, WebLNProvider } from "@fedibtc/ui";
 import "@fedibtc/ui/dist/index.css";
-import { ToastProvider } from "@fedibtc/ui";
+import { Analytics } from "@vercel/analytics/react";
+import { Metadata } from "next";
+import "./globals.css";
 
 export const metadata: Metadata = {
   title:
@@ -29,8 +31,17 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <body>
         <ToastProvider>
-          <QueryClientProvider>{children}</QueryClientProvider>
+          <WebLNProvider>
+            <NostrProvider>
+              <AuthProvider>
+                <Fallback>
+                  <QueryClientProvider>{children}</QueryClientProvider>
+                </Fallback>
+              </AuthProvider>
+            </NostrProvider>
+          </WebLNProvider>
         </ToastProvider>
+
         <Analytics />
       </body>
     </html>

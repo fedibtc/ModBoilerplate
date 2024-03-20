@@ -1,27 +1,28 @@
-import { cn } from "@/lib/utils";
-import React from "react";
+import { ComponentProps } from "react";
+import { styled } from "react-tailwind-variants";
 
-export default function Container({
-  children,
-  center = false,
-  className = "",
-}: {
-  children: React.ReactNode;
-  center?: boolean;
-  className?: string;
-}) {
+export default function Container(
+  props: ComponentProps<typeof ContainerInner>,
+) {
   return (
-    <div className="w-full flex flex-col items-center justify-center min-h-screen">
-      <div
-        className={cn(
-          `flex flex-col gap-lg items-center justify-center grow w-full ${
-            center ? "" : "h-full"
-          } max-w-[480px]`,
-          className,
-        )}
-      >
-        {children}
-      </div>
-    </div>
+    <ContainerOuter>
+      <ContainerInner {...props} />
+    </ContainerOuter>
   );
 }
+
+const ContainerOuter = styled("div", {
+  base: "w-full flex flex-col items-center justify-center min-h-screen",
+});
+
+const ContainerInner = styled("div", {
+  base: "flex flex-col gap-lg items-center justify-center grow w-full max-w-[480px]",
+  variants: {
+    center: {
+      true: "h-full",
+    },
+  },
+  defaultVariants: {
+    center: false,
+  },
+});

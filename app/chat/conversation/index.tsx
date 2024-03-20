@@ -2,8 +2,8 @@ import {
   ConversationWithMessages,
   useAppState,
 } from "@/components/providers/app-state-provider";
-import { Text } from "@fedibtc/ui";
 import { queryGet } from "@/lib/rest";
+import { Text } from "@fedibtc/ui";
 import { useQuery } from "@tanstack/react-query";
 import { Message as AIMessage } from "ai";
 import { useChat } from "ai/react";

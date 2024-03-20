@@ -1,5 +1,8 @@
 import { Text } from "@fedibtc/ui";
 import { Message as AIMessage } from "ai";
+import { marked } from "marked";
+import { styled } from "react-tailwind-variants";
+import sanitize from "sanitize-html";
 
 export default function Message({
   message,
@@ -24,14 +27,36 @@ export default function Message({
               : "bg-blue/10 !rounded-br-[4px]"
           } ${loading ? "animate-pulse" : ""}`}
         >
-          <Text
+          <MessageContent
             variant="body"
-            className={loading ? `${loading ? "text-transparent" : ""}` : ""}
-          >
-            {message.content}
-          </Text>
+            loading={loading}
+            dangerouslySetInnerHTML={{
+              __html: sanitize(marked.parse(message.content) as string, {
+                allowedTags: [
+                  "strong",
+                  "em",
+                  "a",
+                  "s",
+                  "ul",
+                  "ol",
+                  "li",
+                  "br",
+                  "p",
+                ],
+              }),
+            }}
+          />
         </div>
       </div>
     </div>
   );
 }
+
+const MessageContent = styled(Text, {
+  base: "markdown",
+  variants: {
+    loading: {
+      true: "text-transparent",
+    },
+  },
+});

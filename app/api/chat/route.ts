@@ -1,4 +1,3 @@
-import { minSats } from "@/lib/constants";
 import { satsForTokens, tokensForSats } from "@/lib/sats";
 import { getBalance } from "@/lib/server/auth";
 import prisma from "@/lib/server/prisma";
@@ -7,8 +6,12 @@ import { openai } from "./openai";
 
 export async function POST(req: Request) {
   try {
-    const { balance } = await getBalance();
+    const bal = await getBalance();
     const { messages, conversationId } = await req.json();
+
+    if (!bal) {
+      throw new Error("No balance found");
+    }
 
     if (typeof conversationId !== "number") {
       throw new Error("Invalid Conversation ID");
@@ -22,12 +25,12 @@ export async function POST(req: Request) {
       throw new Error("No messages provided");
     }
 
-    if (balance.balance < minSats) {
+    if (bal.balance.balance < 1) {
       throw new Error("Insufficient balance");
     }
 
     let completionTokens =
-      tokensForSats(balance.balance) - messages.at(-1).length;
+      tokensForSats(bal.balance.balance) - messages.at(-1).length;
 
     if (completionTokens <= 0) {
       throw new Error("Insufficient balance");
@@ -63,10 +66,10 @@ export async function POST(req: Request) {
 
         await prisma.balance.update({
           where: {
-            id: balance.id,
+            id: bal.balance.id,
           },
           data: {
-            balance: Math.max(balance.balance - satsForTokens(tokens), 0),
+            balance: Math.max(bal.balance.balance - satsForTokens(tokens), 0),
           },
         });
       },

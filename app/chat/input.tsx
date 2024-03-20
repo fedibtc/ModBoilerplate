@@ -1,6 +1,5 @@
 import { useAppState } from "@/components/providers/app-state-provider";
-import { Text, Icon } from "@fedibtc/ui";
-import { minSats } from "@/lib/constants";
+import { Icon, Text } from "@fedibtc/ui";
 
 export default function ChatInput({
   onSubmit,
@@ -12,7 +11,7 @@ export default function ChatInput({
 } & Omit<React.InputHTMLAttributes<HTMLInputElement>, "className">) {
   const { balance, setTopupDialog } = useAppState();
 
-  return (balance?.balance ?? 0) < minSats ? (
+  return (balance?.balance ?? 0) < 1 ? (
     <div className="flex items-center p-md justify-center">
       <Text className="flex gap-xs text-center">
         <a
