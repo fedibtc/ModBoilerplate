@@ -2,7 +2,7 @@ import { cookies } from "next/headers";
 import prisma from "./prisma";
 
 export async function getSession() {
-  const token = cookies().get("token");
+  const token = cookies().get("session");
 
   if (!token?.value) {
     return null;
@@ -21,7 +21,7 @@ export async function getSession() {
 }
 
 export async function getBalance() {
-  const token = cookies().get("token");
+  const token = cookies().get("session");
 
   if (!token?.value) {
     return null;

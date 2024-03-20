@@ -43,8 +43,14 @@ type ConnectResult =
     };
 
 export async function connect(args: ConnectInput): Promise<ConnectResult> {
+  const sessionCookie = cookies().get("session");
+
   try {
-    const sessionCookie = cookies().get("session");
+    const { pubkey } = connectInput.parse(args);
+
+    if (!sessionCookie?.value) {
+      cookies().delete("session");
+    }
 
     const session = await prisma.session.findFirst({
       where: {
@@ -55,11 +61,11 @@ export async function connect(args: ConnectInput): Promise<ConnectResult> {
       },
     });
 
-    if (sessionCookie?.value && session?.user?.pubkey === args.pubkey) {
+    if (session?.user?.pubkey === pubkey) {
       return { success: true, data: { user: session.user } };
-    } else {
-      cookies().delete("session");
     }
+
+    cookies().delete("session");
 
     const user = await prisma.user.findFirst({
       where: {
@@ -68,25 +74,22 @@ export async function connect(args: ConnectInput): Promise<ConnectResult> {
     });
 
     if (user) {
-      if (session && session.userID === user.id) {
-        cookies().set("session", session.token);
+      const newSession = await prisma.session.upsert({
+        where: { userID: user.id },
+        create: {
+          userID: user.id,
+          sigToken: v4(),
+          token: v4(),
+        },
+        update: {
+          sigToken: v4(),
+          token: v4(),
+        },
+      });
 
-        return { success: true, data: { user } };
-      } else {
-        const newSession = await prisma.session.upsert({
-          where: { userID: user.id },
-          create: {
-            userID: user.id,
-            sigToken: v4(),
-            token: v4(),
-          },
-          update: {},
-        });
+      cookies().set("session", newSession.token);
 
-        cookies().set("session", newSession.token);
-
-        return { success: true, data: { sigToken: newSession.sigToken } };
-      }
+      return { success: true, data: { sigToken: newSession.sigToken } };
     }
 
     const newUser = await prisma.user.create({
@@ -104,7 +107,7 @@ export async function connect(args: ConnectInput): Promise<ConnectResult> {
       },
     });
 
-    if (!newUser.session) throw new Error("Error creating session");
+    if (!newUser?.session) throw new Error("Error creating new user session");
 
     cookies().set("session", newUser.session.token);
 
@@ -146,7 +149,7 @@ export async function login(evt: Event) {
     if (session.sigToken !== challengeTag[1])
       throw new Error("Invalid signature");
 
-    cookies().set("token", session.token);
+    cookies().set("session", session.token);
 
     return {
       success: true,
