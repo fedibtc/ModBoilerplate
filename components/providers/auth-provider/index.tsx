@@ -61,7 +61,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             kind: 22242,
             created_at: Math.floor(Date.now() / 1000),
             tags: [["challenge", connectionRes.data.sigToken]],
-            content: "Log into Multispend",
+            content: "Log into AI Assistant",
             pubkey: nostr.pubkey,
           };
 
