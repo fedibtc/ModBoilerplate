@@ -1,37 +1,40 @@
-import QueryClientProvider from "@/components/providers/query-client-provider";
-import { ToastProvider } from "@fedibtc/ui";
-import "@fedibtc/ui/dist/index.css";
-import { Analytics } from "@vercel/analytics/react";
-import { Metadata } from "next";
-import "./globals.css";
+import { NostrProvider, ToastProvider, WebLNProvider } from "@fedibtc/ui"
+import "@fedibtc/ui/dist/index.css"
+import type { Metadata } from "next"
+import { Albert_Sans } from "next/font/google"
+import Fallback from "./components/fallback"
+import { AuthProvider } from "./components/providers/auth-provider"
+import { FederationProvider } from "./components/providers/federation-provider"
+import "./globals.css"
+
+const albertSans = Albert_Sans({ subsets: ["latin"] })
 
 export const metadata: Metadata = {
-  title: "Fedi Mod Boilerplate",
-  description: "Edit description",
-  icons: {
-    icon: "/favicon.ico",
-  },
-};
-
-export const viewport = {
-  width: "device-width",
-  initialScale: 1,
-  maximumScale: 1,
-};
+  title: "Multispend",
+  description: "Securely share sats with your friends",
+  icons: ["logo.png"],
+}
 
 export default function RootLayout({
   children,
-}: {
-  children: React.ReactNode;
-}) {
+}: Readonly<{
+  children: React.ReactNode
+}>) {
   return (
-    <html lang="en" suppressHydrationWarning>
-      <body>
-        <QueryClientProvider>
-          <ToastProvider>{children}</ToastProvider>
-        </QueryClientProvider>
-        <Analytics />
+    <html lang="en">
+      <body className={albertSans.className}>
+        <ToastProvider>
+          <WebLNProvider>
+            <NostrProvider>
+              <AuthProvider>
+                <FederationProvider>
+                  <Fallback>{children}</Fallback>
+                </FederationProvider>
+              </AuthProvider>
+            </NostrProvider>
+          </WebLNProvider>
+        </ToastProvider>
       </body>
     </html>
-  );
+  )
 }

@@ -2,7 +2,7 @@ procs:
   user:
     shell: zsh
     stop: SIGKILL
-  multispend:
+  mod:
     shell: bun i && bun dev
   prisma-studio:
     shell: bun prisma studio --browser none

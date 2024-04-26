@@ -1,6 +1,6 @@
-"use client";
+"use client"
 
-import Container from "@/components/container";
+import Container from "./components/container"
 import {
   Button,
   Icon,
@@ -9,13 +9,13 @@ import {
   WebLNProvider,
   useNostrContext,
   useWebLNContext,
-} from "@fedibtc/ui";
+} from "@fedibtc/ui"
 
 function Content() {
-  const { isLoading: isWeblnLoading, error: weblnError } = useWebLNContext();
-  const { isLoading: isNostrLoading, error: nostrError } = useNostrContext();
+  const { isLoading: isWeblnLoading, error: weblnError } = useWebLNContext()
+  const { isLoading: isNostrLoading, error: nostrError } = useNostrContext()
 
-  const error = weblnError || nostrError;
+  const error = weblnError || nostrError
 
   if (isWeblnLoading) {
     return (
@@ -23,7 +23,7 @@ function Content() {
         <Icon icon="IconLoader2" size="lg" className="animate-spin" />
         <Text>Initializing WebLN...</Text>
       </Container>
-    );
+    )
   }
 
   if (isNostrLoading) {
@@ -32,7 +32,7 @@ function Content() {
         <Icon icon="IconLoader2" size="lg" className="animate-spin" />
         <Text>Initializing Nostr...</Text>
       </Container>
-    );
+    )
   }
 
   if (error) {
@@ -43,15 +43,17 @@ function Content() {
         </Text>
         <Text>{error.message}</Text>
       </Container>
-    );
+    )
   }
 
   return (
-    <Container>
+    <Container className="p-2 items-center">
       <Text weight="bold" variant="h1">
         Fedi Mod Boilerplate
       </Text>
-      <Text>A lightweight and easy-to-use template for building Fedi Mods</Text>
+      <Text className="text-center">
+        A lightweight and easy-to-use template for building Fedi Mods
+      </Text>
       <Button
         href="https://fedibtc.github.io/fedi-docs/docs/mods/developers/intro"
         icon="IconExternalLink"
@@ -65,7 +67,7 @@ function Content() {
         Github
       </Button>
     </Container>
-  );
+  )
 }
 
 export default function Index() {
@@ -75,5 +77,5 @@ export default function Index() {
         <Content />
       </NostrProvider>
     </WebLNProvider>
-  );
+  )
 }

@@ -6,6 +6,24 @@ generator client {
 }
 
 datasource db {
-  provider  = "postgresql"
-  url       = env("POSTGRES_URL")
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
 }
+
+model User {
+  id          Int      @id @unique @default(autoincrement())
+  pubkey      String   @unique
+  timeCreated DateTime @default(now()) @db.Timestamptz(3)
+
+  session Session?
+}
+
+model Session {
+  id       Int    @id @unique @default(autoincrement())
+  userId   Int    @unique
+  token    String @unique @default(cuid())
+  sigToken String @unique @default(cuid())
+
+  user User @relation(fields: [userId], references: [id])
+}
+
