@@ -51,7 +51,17 @@ export function FederationProvider({
       try {
         if (!window.fediInternal)
           throw new Error(
-            "Please update the Fedi app to the latest version to use Multispend",
+            "Please update the Fedi app to the latest version to use This Fedi Mod",
+          )
+
+        if (!window.fediInternal.getActiveFederation)
+          throw new Error(
+            "Method getActiveFederation() not found in Fedi api injection. Please update the app and try again",
+          )
+
+        if (!window.fediInternal.getAuthenticatedMember)
+          throw new Error(
+            "Method getAuthenticatedMember() not found in Fedi api injection. Please update the app and try again",
           )
 
         const currentFederation =
