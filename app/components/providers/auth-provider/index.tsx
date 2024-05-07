@@ -1,10 +1,11 @@
 "use client"
 
-import { useNostrContext } from "@fedibtc/ui"
-import { User } from "@prisma/client"
+import { User } from "@/lib/drizzle/schema"
+import { useFediInjectionContext } from "@fedibtc/ui"
 import { Event, UnsignedEvent, getEventHash } from "nostr-tools"
 import { createContext, useContext, useEffect, useState } from "react"
-import { connect, login } from "./actions"
+import { connect } from "./actions/connect"
+import { login } from "./actions/login"
 
 interface AuthContextType {
   isLoading: boolean
@@ -42,14 +43,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [isLoading, setIsLoading] = useState(true)
   const [user, setUser] = useState<User | null>(null)
 
-  const { nostr } = useNostrContext()
+  const { nostr, nostrPubkey, status } = useFediInjectionContext()
 
   useEffect(() => {
     async function attemptLogin() {
       try {
         if (!nostr) throw new Error("No nostr provider found")
 
-        const connectionRes = await connect({ pubkey: nostr.pubkey })
+        const connectionRes = await connect({ pubkey: nostrPubkey })
 
         if (!connectionRes.success) throw new Error(connectionRes.message)
 
@@ -65,7 +66,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           created_at: Math.floor(Date.now() / 1000),
           tags: [["challenge", connectionRes.data.sigToken]],
           content: "Log into Multispend",
-          pubkey: nostr.pubkey,
+          pubkey: nostrPubkey,
         }
 
         const event: Omit<Event, "sig"> = {
@@ -88,10 +89,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       }
     }
 
-    if (nostr) {
+    if (nostr && status === "success") {
       attemptLogin()
     }
-  }, [nostr])
+  }, [nostr, nostrPubkey, status])
 
   return (
     <AuthContext.Provider

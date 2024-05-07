@@ -8,9 +8,8 @@ A template for building Fedi Mods.
    ```bash
    git clone https://github.com/fedibtc/ModBoilerplate.git
    ```
-2. Ensure you have [Nix installed](https://nixos.org/download)
-3. Open a shell and run `nix develop`
-4. Run `just dev` to start the development server
+2. Ensure you have [Nix](https://nixos.org/download) and [Mprocs](https://github.com/pvolok/mprocs) installed
+3. Open a shell and run `mprocs` to start the development environment
 
 ## Production
 

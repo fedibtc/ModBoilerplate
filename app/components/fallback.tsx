@@ -1,52 +1,26 @@
 "use client"
 
-import {
-  Icon,
-  Text,
-  formatError,
-  useNostrContext,
-  useWebLNContext,
-} from "@fedibtc/ui"
+import { formatError } from "@/lib/errors"
+import { Icon, Text, useFediInjectionContext } from "@fedibtc/ui"
 import Container from "./container"
 import { useAuth } from "./providers/auth-provider"
-import { useFederationContext } from "./providers/federation-provider"
 
 export default function Fallback({ children }: { children: React.ReactNode }) {
-  const { isLoading: isWeblnLoading, error: weblnError } = useWebLNContext()
-  const { isLoading: isNostrLoading, error: nostrError } = useNostrContext()
+  const { isLoading, status, error: injectionError } = useFediInjectionContext()
   const { isLoading: isAuthLoading, error: authError } = useAuth()
-  const { isLoading: isFederationLoading, error: federationError } =
-    useFederationContext()
 
-  const error = weblnError || nostrError || authError || federationError
-
-  if (isWeblnLoading) {
-    return (
-      <Container>
-        <Icon
-          icon="IconLoader2"
-          size="lg"
-          className="animate-spin text-lightGrey"
-        />
-        <Text>Initializing WebLN...</Text>
-      </Container>
-    )
+  const statusMessage: Record<typeof status, string> = {
+    success: "Success",
+    error: "Error",
+    checking_injections: "Establishing Connection",
+    loading_nostr: "Loading Nostr",
+    loading_webln: "Loading WebLN",
+    loading_fedi_api: "Connecting to Fedi",
   }
 
-  if (isNostrLoading) {
-    return (
-      <Container>
-        <Icon
-          icon="IconLoader2"
-          size="lg"
-          className="animate-spin text-lightGrey"
-        />
-        <Text>Initializing Nostr...</Text>
-      </Container>
-    )
-  }
+  const error = injectionError || authError
 
-  if (isAuthLoading) {
+  if (isLoading || isAuthLoading) {
     return (
       <Container>
         <Icon
@@ -54,20 +28,7 @@ export default function Fallback({ children }: { children: React.ReactNode }) {
           size="lg"
           className="animate-spin text-lightGrey"
         />
-        <Text>Authenticating...</Text>
-      </Container>
-    )
-  }
-
-  if (isFederationLoading) {
-    return (
-      <Container>
-        <Icon
-          icon="IconLoader2"
-          size="lg"
-          className="animate-spin text-lightGrey"
-        />
-        <Text>Connecting to Federation...</Text>
+        <Text>{isLoading ? statusMessage[status] : "Authenticating"}...</Text>
       </Container>
     )
   }

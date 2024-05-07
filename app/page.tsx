@@ -1,51 +1,9 @@
 "use client"
 
+import { Button, Text } from "@fedibtc/ui"
 import Container from "./components/container"
-import {
-  Button,
-  Icon,
-  NostrProvider,
-  Text,
-  WebLNProvider,
-  useNostrContext,
-  useWebLNContext,
-} from "@fedibtc/ui"
 
-function Content() {
-  const { isLoading: isWeblnLoading, error: weblnError } = useWebLNContext()
-  const { isLoading: isNostrLoading, error: nostrError } = useNostrContext()
-
-  const error = weblnError || nostrError
-
-  if (isWeblnLoading) {
-    return (
-      <Container>
-        <Icon icon="IconLoader2" size="lg" className="animate-spin" />
-        <Text>Initializing WebLN...</Text>
-      </Container>
-    )
-  }
-
-  if (isNostrLoading) {
-    return (
-      <Container>
-        <Icon icon="IconLoader2" size="lg" className="animate-spin" />
-        <Text>Initializing Nostr...</Text>
-      </Container>
-    )
-  }
-
-  if (error) {
-    return (
-      <Container>
-        <Text weight="bold" variant="h1">
-          Error
-        </Text>
-        <Text>{error.message}</Text>
-      </Container>
-    )
-  }
-
+export default function Index() {
   return (
     <Container className="p-2 items-center">
       <Text weight="bold" variant="h1">
@@ -67,15 +25,5 @@ function Content() {
         Github
       </Button>
     </Container>
-  )
-}
-
-export default function Index() {
-  return (
-    <WebLNProvider>
-      <NostrProvider>
-        <Content />
-      </NostrProvider>
-    </WebLNProvider>
   )
 }

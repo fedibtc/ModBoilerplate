@@ -4,7 +4,7 @@ procs:
     stop: SIGKILL
   mod:
     shell: bun i && bun dev
-  prisma-studio:
-    shell: bun prisma studio --browser none
+  drizzle-studio:
+    shell: bun drizzle-kit studio
   docker-postgres:
     shell: docker-compose up
