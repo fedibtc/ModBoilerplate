@@ -13,7 +13,7 @@
   },
   "dependencies": {
     "@fedibtc/tailwind-theme": "1.0.3",
-    "@fedibtc/ui": "1.2.0",
+    "@fedibtc/ui": "1.2.1",
     "@nostr-dev-kit/ndk": "^2.3.2",
     "@prisma/client": "5.11.0",
     "@tanstack/react-query": "^5.4.3",
