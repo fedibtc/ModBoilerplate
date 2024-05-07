@@ -6,6 +6,7 @@ import { Event, UnsignedEvent, getEventHash } from "nostr-tools"
 import { createContext, useContext, useEffect, useState } from "react"
 import { connect } from "./actions/connect"
 import { login } from "./actions/login"
+import { fediModName } from "@/lib/constants"
 
 interface AuthContextType {
   isLoading: boolean
@@ -65,7 +66,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           kind: 22242,
           created_at: Math.floor(Date.now() / 1000),
           tags: [["challenge", connectionRes.data.sigToken]],
-          content: "Log into Multispend",
+          content: "Log into " + fediModName,
           pubkey: nostrPubkey,
         }
 

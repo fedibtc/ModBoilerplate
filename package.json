@@ -15,7 +15,7 @@
   },
   "dependencies": {
     "@fedibtc/tailwind-theme": "1.0.3",
-    "@fedibtc/ui": "1.2.0",
+    "@fedibtc/ui": "1.2.1",
     "@paralleldrive/cuid2": "^2.2.2",
     "drizzle-orm": "^0.30.10",
     "next": "^14.1.0",
