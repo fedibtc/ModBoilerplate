@@ -1,42 +1,17 @@
 "use client";
 
-import {
-  Icon,
-  Text,
-  formatError,
-  useNostrContext,
-  useWebLNContext,
-} from "@fedibtc/ui";
-import { useEffect, useState } from "react";
+import { Icon, Text, useFediInjectionContext } from "@fedibtc/ui";
 import Container from "./container";
 import { useAuth } from "./providers/auth-provider";
+import { formatError } from "@/lib/errors";
 
 export default function Fallback({ children }: { children: React.ReactNode }) {
-  const { isLoading: isWeblnLoading, error: weblnError } = useWebLNContext();
-  const { isLoading: isNostrLoading, error: nostrError } = useNostrContext();
+  const { isLoading, error: injectionError } = useFediInjectionContext();
   const { isLoading: isAuthLoading, error: authError } = useAuth();
 
-  const [error, setError] = useState<Error | null>(null);
+  const error = injectionError || authError;
 
-  useEffect(() => {
-    if ("fediInternal" in window) {
-      window.fediInternal?.getActiveFederation().then((res) => {
-        let networkError: Error | null = null;
-
-        if (res.network !== "bitcoin") {
-          networkError = new Error(
-            "Invalid bitcoin network. Only mainnet federations are supported.",
-          );
-        }
-
-        setError(networkError || weblnError || nostrError || authError);
-      });
-    } else {
-      setError(weblnError || nostrError || authError);
-    }
-  }, [weblnError, nostrError, authError]);
-
-  if (isWeblnLoading) {
+  if (isLoading || isAuthLoading) {
     return (
       <Container>
         <Icon
@@ -44,33 +19,7 @@ export default function Fallback({ children }: { children: React.ReactNode }) {
           size="lg"
           className="animate-spin text-lightGrey"
         />
-        <Text>Initializing WebLN...</Text>
-      </Container>
-    );
-  }
-
-  if (isNostrLoading) {
-    return (
-      <Container>
-        <Icon
-          icon="IconLoader2"
-          size="lg"
-          className="animate-spin text-lightGrey"
-        />
-        <Text>Initializing Nostr...</Text>
-      </Container>
-    );
-  }
-
-  if (isAuthLoading) {
-    return (
-      <Container>
-        <Icon
-          icon="IconLoader2"
-          size="lg"
-          className="animate-spin text-lightGrey"
-        />
-        <Text>Authenticating...</Text>
+        <Text>{isLoading ? "Loading" : "Authenticating"}...</Text>
       </Container>
     );
   }

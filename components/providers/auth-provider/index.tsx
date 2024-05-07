@@ -1,6 +1,6 @@
 "use client";
 
-import { useNostrContext } from "@fedibtc/ui";
+import { useFediInjectionContext } from "@fedibtc/ui";
 import { User } from "@prisma/client";
 import { Event, UnsignedEvent, getEventHash } from "nostr-tools";
 import { createContext, useContext, useEffect, useState } from "react";
@@ -42,14 +42,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [error, setError] = useState<Error | null>(null);
   const [user, setUser] = useState<User | null>(null);
 
-  const { nostr } = useNostrContext();
+  const { nostr, nostrPubkey, status } = useFediInjectionContext();
 
   useEffect(() => {
     async function attemptLogin() {
       try {
         if (!nostr) throw new Error("No nostr provider found");
 
-        const connectionRes = await connect({ pubkey: nostr.pubkey });
+        const connectionRes = await connect({ pubkey: nostrPubkey });
 
         if (!connectionRes.success) throw new Error(connectionRes.message);
 
@@ -62,7 +62,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             created_at: Math.floor(Date.now() / 1000),
             tags: [["challenge", connectionRes.data.sigToken]],
             content: "Log into AI Assistant",
-            pubkey: nostr.pubkey,
+            pubkey: nostrPubkey,
           };
 
           const event: Omit<Event, "sig"> = {
@@ -88,10 +88,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       }
     }
 
-    if (nostr) {
+    if (nostr && status === "success") {
       attemptLogin();
     }
-  }, [nostr]);
+  }, [nostr, nostrPubkey, status]);
 
   return (
     <AuthContext.Provider

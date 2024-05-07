@@ -9,19 +9,11 @@ export default function ChatInput({
   onSubmit?: () => void;
   loading?: boolean;
 } & Omit<React.InputHTMLAttributes<HTMLInputElement>, "className">) {
-  const { balance, setTopupDialog } = useAppState();
+  const { balance } = useAppState();
 
   return (balance?.balance ?? 0) < 1 ? (
     <div className="flex items-center p-md justify-center">
-      <Text className="flex gap-xs text-center">
-        <a
-          className="underline cursor-pointer text-grey hover:text-primary"
-          onClick={() => setTopupDialog(true)}
-        >
-          Top up
-        </a>{" "}
-        <span>to start chatting</span>
-      </Text>
+      <Text className="flex gap-xs text-center">Top up to start chatting</Text>
     </div>
   ) : (
     <div className="flex gap-md focus-within:!border-blue items-center px-md">
