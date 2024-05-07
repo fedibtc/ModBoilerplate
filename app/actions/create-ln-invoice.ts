@@ -40,7 +40,7 @@ export async function createLnInvoice(
 
     const fedimint = await createFedimintClient();
 
-    const { invoice, operationId } = await fedimint.ln.createInvoice({
+    const { invoice, operationId } = await fedimint.lightning.createInvoice({
       amountMsat,
       description: `Deposit ${amount} sats`,
     });

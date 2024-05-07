@@ -7,7 +7,7 @@ export const createFedimintClient = async () => {
     .setActiveFederationId(process.env.FEDERATION_ID);
 
   const client = clientBuilder.build();
-
+  const gateways = await client.lightning.listGateways();
   const { federationIds } = await client.federationIds();
 
   if (!federationIds.includes(process.env.FEDERATION_ID)) {
@@ -15,6 +15,12 @@ export const createFedimintClient = async () => {
       "AI Assistant is not enabled in this federation. Please contact Fedi's Support Team.",
     );
   }
+
+  if (gateways.length === 0) {
+    throw new Error("No gateways found");
+  }
+
+  client.setActiveGatewayId(gateways[0].info.gateway_id);
 
   return client;
 };

@@ -35,9 +35,7 @@ export async function depositEcash(
 
     const fedimint = await createFedimintClient();
 
-    const { amountMsat } = await fedimint.mint.reissue({
-      notes,
-    });
+    const { amountMsat } = await fedimint.mint.reissue(notes);
 
     const amount = Math.round(amountMsat / 1000);
 

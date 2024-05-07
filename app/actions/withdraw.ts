@@ -45,9 +45,8 @@ export async function redeemLighting(
 
     const fedimint = await createFedimintClient();
 
-    await fedimint.ln.pay({
+    await fedimint.lightning.pay({
       paymentInfo: invoice,
-      finishInBackground: false,
     });
 
     await prisma.balance.update({

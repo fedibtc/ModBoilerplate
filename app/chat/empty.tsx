@@ -60,7 +60,11 @@ export default function EmptyState() {
         notes: ecashNotes,
       });
 
-      if (!res.success) throw new Error(res.message);
+      if (!res.success) {
+        // Reclaim the ecash so the notes aren't lost
+        await fedi.receiveEcash?.(ecashNotes);
+        throw new Error(res.message);
+      }
 
       toast.show({
         content: `Successfully deposited ${res.amount} sats`,
