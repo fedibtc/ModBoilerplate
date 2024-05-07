@@ -22,6 +22,8 @@ export const viewport = {
   maximumScale: 1,
 };
 
+const env = process.env.NEXT_PUBLIC_ENV;
+
 export default function RootLayout({
   children,
 }: {
@@ -31,7 +33,14 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <body>
         <ToastProvider>
-          <FediInjectionProvider>
+          <FediInjectionProvider
+            fediModName="AI Assistant"
+            minSupportedAPIVersion="legacy"
+            supportedBitcoinNetworks={{
+              signet: env !== "production",
+              bitcoin: env !== "preview",
+            }}
+          >
             <AuthProvider>
               <Fallback>
                 <QueryClientProvider>{children}</QueryClientProvider>
