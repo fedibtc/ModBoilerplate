@@ -18,6 +18,7 @@
     "@fedibtc/ui": "1.2.1",
     "@paralleldrive/cuid2": "^2.2.2",
     "drizzle-orm": "^0.30.10",
+    "fedimint-ts": "^0.3.2",
     "next": "^14.1.0",
     "nostr-tools": "^2.5.1",
     "pg": "^8.11.5",
