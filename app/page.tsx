@@ -7,7 +7,6 @@ import {
 } from "@/components/providers/app-state-provider";
 import Conversation from "./chat/conversation";
 import EmptyState from "./chat/empty";
-import TopupDialog from "./topup";
 
 export default function Chat() {
   return (
@@ -24,10 +23,5 @@ export default function Chat() {
 function ConversationOrEmpty() {
   const { conversation } = useAppState();
 
-  return (
-    <>
-      {conversation ? <Conversation /> : <EmptyState />}
-      <TopupDialog />
-    </>
-  );
+  return <>{conversation ? <Conversation /> : <EmptyState />}</>;
 }

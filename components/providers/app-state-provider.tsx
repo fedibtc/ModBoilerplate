@@ -14,8 +14,6 @@ interface AppState {
   conversation?: Conversation | null;
   setConversation: Dispatch<SetStateAction<Conversation | null>>;
   refetchBalance: () => void;
-  topupDialog: boolean;
-  setTopupDialog: Dispatch<SetStateAction<boolean>>;
 }
 
 export const AppStateContext = createContext<AppState | null>(null);
@@ -43,7 +41,6 @@ export const AppStateProvider = ({
   });
 
   const [conversation, setConversation] = useState<Conversation | null>(null);
-  const [topupDialog, setTopupDialog] = useState(false);
 
   return (
     <AppStateContext.Provider
@@ -52,8 +49,6 @@ export const AppStateProvider = ({
         refetchBalance,
         conversation,
         setConversation,
-        topupDialog,
-        setTopupDialog,
       }}
     >
       {children}

@@ -1,7 +1,7 @@
 import Fallback from "@/components/fallback";
 import { AuthProvider } from "@/components/providers/auth-provider";
 import QueryClientProvider from "@/components/providers/query-client-provider";
-import { NostrProvider, ToastProvider, WebLNProvider } from "@fedibtc/ui";
+import { ToastProvider, FediInjectionProvider } from "@fedibtc/ui";
 import "@fedibtc/ui/dist/index.css";
 import { Analytics } from "@vercel/analytics/react";
 import { Metadata } from "next";
@@ -31,15 +31,13 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <body>
         <ToastProvider>
-          <WebLNProvider>
-            <NostrProvider>
-              <AuthProvider>
-                <Fallback>
-                  <QueryClientProvider>{children}</QueryClientProvider>
-                </Fallback>
-              </AuthProvider>
-            </NostrProvider>
-          </WebLNProvider>
+          <FediInjectionProvider>
+            <AuthProvider>
+              <Fallback>
+                <QueryClientProvider>{children}</QueryClientProvider>
+              </Fallback>
+            </AuthProvider>
+          </FediInjectionProvider>
         </ToastProvider>
 
         <Analytics />

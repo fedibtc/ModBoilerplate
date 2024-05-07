@@ -2,7 +2,7 @@
 
 import { useAppState } from "@/components/providers/app-state-provider";
 import { queryGet } from "@/lib/rest";
-import { Button, Icon, Text, useToast, useWebLN } from "@fedibtc/ui";
+import { Button, Icon, Text, useFediInjection, useToast } from "@fedibtc/ui";
 import { Conversation } from "@prisma/client";
 import { useQuery } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
@@ -11,40 +11,16 @@ import { redeemLighting } from "../actions/withdraw";
 import { createChat } from "./actions/create";
 import ChatInput from "./input";
 
-declare global {
-  interface Window {
-    fediInternal?: {
-      generateEcash(amountMsat: {
-        amount?: string | number;
-        defaultAmount?: string | number;
-        minimumAmount?: string | number;
-        maximumAmount?: string | number;
-      }): Promise<string>;
-      receiveEcash(ecash: string): Promise<string>;
-      getActiveFederation(): Promise<{
-        id: string;
-        name: string;
-        network: "signet" | "bitcoin";
-      }>;
-      getAuthenticatedMember(): Promise<{
-        id: string;
-        username: string;
-      }>;
-    };
-  }
-}
-
 export default function EmptyState() {
   const [value, setValue] = useState("");
   const [depositLoading, setDepositLoading] = useState(false);
   const [withdrawLoading, setWithdrawLoading] = useState(false);
   const [isCreatingConversation, setIsCreatingConversation] = useState(false);
 
-  const { balance, refetchBalance, setConversation, setTopupDialog } =
-    useAppState();
+  const { balance, refetchBalance, setConversation } = useAppState();
 
   const toast = useToast();
-  const webln = useWebLN();
+  const { webln, fedi } = useFediInjection();
 
   const handleCreateConversation = async (text: string) => {
     setIsCreatingConversation(true);
@@ -66,40 +42,36 @@ export default function EmptyState() {
   });
 
   const handleTopup = async () => {
-    if ("fediInternal" in window) {
-      setDepositLoading(true);
+    setDepositLoading(true);
+    try {
+      let ecashNotes: string | undefined;
+
       try {
-        let ecashNotes: string | undefined;
-
-        try {
-          ecashNotes = await window.fediInternal?.generateEcash({
-            minimumAmount: 1,
-          });
-        } catch {
-          /* no-op */
-        }
-
-        if (!ecashNotes) return;
-
-        const res = await depositEcash({
-          notes: ecashNotes,
+        ecashNotes = await fedi.generateEcash?.({
+          minimumAmount: 1,
         });
-
-        if (!res.success) throw new Error(res.message);
-
-        toast.show({
-          content: `Successfully deposited ${res.amount} sats`,
-          status: "success",
-        });
-
-        refetchBalance();
-      } catch (e) {
-        toast.error(e);
-      } finally {
-        setDepositLoading(false);
+      } catch {
+        /* no-op */
       }
-    } else {
-      setTopupDialog(true);
+
+      if (!ecashNotes) return;
+
+      const res = await depositEcash({
+        notes: ecashNotes,
+      });
+
+      if (!res.success) throw new Error(res.message);
+
+      toast.show({
+        content: `Successfully deposited ${res.amount} sats`,
+        status: "success",
+      });
+
+      refetchBalance();
+    } catch (e) {
+      toast.error(e);
+    } finally {
+      setDepositLoading(false);
     }
   };
 

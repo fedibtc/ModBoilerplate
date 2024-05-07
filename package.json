@@ -8,12 +8,12 @@
     "start": "next start",
     "lint": "tsc --noEmit && next lint",
     "db:sync": "prisma generate && prisma migrate deploy",
-    "format": "prettier --ignore-path .gitignore --write \"**/*.{js,ts,tsx}\" --plugin=prettier-plugin-organize-imports",
-    "format:check": "prettier --ignore-path .gitignore --check \"**/*.{js,ts,tsx}\" --plugin=prettier-plugin-organize-imports"
+    "format": "prettier --ignore-path .gitignore --write \"**/*.{js,ts,tsx}\"",
+    "format:check": "prettier --ignore-path .gitignore --check \"**/*.{js,ts,tsx}\""
   },
   "dependencies": {
     "@fedibtc/tailwind-theme": "1.0.3",
-    "@fedibtc/ui": "1.1.4",
+    "@fedibtc/ui": "1.2.0",
     "@nostr-dev-kit/ndk": "^2.3.2",
     "@prisma/client": "5.11.0",
     "@tanstack/react-query": "^5.4.3",
@@ -30,7 +30,6 @@
     "react-dom": "^18",
     "react-tailwind-variants": "^1.0.2",
     "sanitize-html": "^2.12.1",
-    "tailwindcss-animate": "^1.0.7",
     "uuid": "^9.0.1",
     "zod": "^3.22.4"
   },
@@ -48,7 +47,6 @@
     "eslint-config-next": "14.1.0",
     "postcss": "^8.4.32",
     "prettier": "^3.2.5",
-    "prettier-plugin-organize-imports": "^3.2.4",
     "tailwindcss": "^3.4.1",
     "typescript": "^5",
     "vercel": "^32.5.3"
