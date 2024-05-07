@@ -13,7 +13,7 @@ interface AuthContextType {
   user: User | null
 }
 
-interface AuthContextLoading extends AuthContextType {
+iterface AuthContextLoading extends AuthContextType {
   isLoading: true
   error: null
   user: null
