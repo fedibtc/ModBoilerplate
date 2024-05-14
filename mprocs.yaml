@@ -8,3 +8,5 @@ procs:
     shell: bun drizzle-kit studio
   docker-postgres:
     shell: docker-compose up
+  remote-server:
+    shell: bun remote-server

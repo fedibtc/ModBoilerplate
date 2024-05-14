@@ -7,11 +7,12 @@
     "build": "bun db:migrate && next build",
     "start": "next start",
     "lint": "next lint",
-    "db:migrate": "bun lib/drizzle/migrate.ts",
+    "db:migrate": "bun scripts/migrate.ts",
     "db:generate": "drizzle-kit generate:pg",
     "db:sync": "bun db:generate && bun db:migrate",
     "format": "prettier --ignore-path .gitignore --write \"**/*.{js,ts,tsx}\"",
-    "format:check": "prettier --ignore-path .gitignore --check \"**/*.{js,ts,tsx}\""
+    "format:check": "prettier --ignore-path .gitignore --check \"**/*.{js,ts,tsx}\"",
+    "remote-server": "node scripts/remote-server.js"
   },
   "dependencies": {
     "@fedibtc/tailwind-theme": "1.0.3",
@@ -38,9 +39,14 @@
     "drizzle-kit": "^0.20.18",
     "eslint": "^8",
     "eslint-config-next": "13.5.5",
+    "ngrok": "^5.0.0-beta.2",
     "postcss": "^8",
     "prettier": "^3.0.3",
+    "qrcode": "^1.5.3",
     "tailwindcss": "^3",
     "typescript": "^5.2.2"
-  }
+  },
+  "trustedDependencies": [
+    "ngrok"
+  ]
 }
