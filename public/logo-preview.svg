@@ -1,0 +1,31 @@
+<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" xmlns:bx="https://boxy-svg.com">
+  <defs>
+    <linearGradient gradientUnits="userSpaceOnUse" x1="50" y1="0" x2="50" y2="100" id="gradient-0">
+      <stop offset="0" style="stop-color: rgb(49, 72, 80);"></stop>
+      <stop offset="1" style="stop-color: rgb(27, 39, 44);"></stop>
+    </linearGradient>
+    <linearGradient id="gradient-7" bx:pinned="true">
+      <stop offset="0" style="stop-color: rgb(11, 17, 20);"></stop>
+      <stop offset="1" style="stop-color: rgb(47, 53, 55);"></stop>
+    </linearGradient>
+    <linearGradient id="gradient-1" bx:pinned="true">
+      <stop offset="0" style="stop-color: rgb(224, 29, 0);"></stop>
+      <stop offset="0.139" style="stop-color: rgb(236, 164, 40);"></stop>
+      <stop offset="0.288" style="stop-color: rgb(106, 210, 4);"></stop>
+      <stop offset="0.434" style="stop-color: rgb(2, 147, 247);"></stop>
+      <stop offset="0.592" style="stop-color: rgb(250, 107, 20);"></stop>
+      <stop offset="0.733" style="stop-color: rgb(239, 186, 255);"></stop>
+      <stop offset="0.884" style="stop-color: rgb(100, 54, 254);"></stop>
+      <stop offset="1" style="stop-color: rgb(178, 33, 226);"></stop>
+    </linearGradient>
+    <linearGradient gradientUnits="userSpaceOnUse" x1="50" y1="0" x2="50" y2="100" id="gradient-2">
+      <stop offset="0" style="stop-color: #bada55"></stop>
+      <stop offset="1" style="stop-color: #758d29"></stop>
+    </linearGradient>
+  </defs>
+  <rect style="fill: url(#gradient-0);" x="0" y="0" width="100" height="100" rx="20" ry="20"></rect>
+  <g transform="matrix(1, 0, 0, 1, 0.000001, 0)">
+    <path d="M 52.777 63.889 L 38.889 72.222 L 38.889 63.889 L 33.333 63.889 C 28.731 63.889 25 60.156 25 55.556 L 25 33.333 C 25 28.731 28.731 25 33.333 25 L 66.667 25 C 71.267 25 75 28.731 75 33.333 L 75 48.612" style="fill: none; stroke-linecap: round; stroke-linejoin: round; stroke-width: 5px; stroke: rgb(55, 90, 113);"></path>
+    <path d="M 69.444 58.333 L 63.889 66.667 L 75 66.667 L 69.444 75" style="fill: none; stroke-linecap: round; stroke-linejoin: round; stroke-width: 5px; stroke: rgb(55, 90, 113);"></path>
+  </g>
+</svg>

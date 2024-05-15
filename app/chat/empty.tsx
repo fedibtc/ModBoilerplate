@@ -10,6 +10,9 @@ import { depositEcash } from "../actions/topup-ecash";
 import { redeemLighting } from "../actions/withdraw";
 import { createChat } from "./actions/create";
 import ChatInput from "./input";
+import { styled } from "react-tailwind-variants";
+
+const env = process.env.NEXT_PUBLIC_ENV;
 
 export default function EmptyState() {
   const [value, setValue] = useState("");
@@ -174,6 +177,16 @@ export default function EmptyState() {
         <div className="grow flex flex-col gap-sm justify-center items-center">
           <Text variant="h1" weight="bolder">
             AI Assistant
+            {env !== "production" && (
+              <>
+                {" "}
+                <EnvironmentBadge environment={env}>
+                  <Text weight="medium">
+                    {env === "development" ? "Dev" : "Preview"}
+                  </Text>
+                </EnvironmentBadge>
+              </>
+            )}
           </Text>
           <Text>Chats for Sats ⚡️</Text>
           <Text>Balance: {balance?.balance} sats</Text>
@@ -202,3 +215,13 @@ export default function EmptyState() {
     </>
   );
 }
+
+const EnvironmentBadge = styled("div", {
+  base: "inline-block rounded-full px-2 py-1 text-white align-middle",
+  variants: {
+    environment: {
+      development: "bg-violet-500",
+      preview: "bg-blue",
+    },
+  },
+});

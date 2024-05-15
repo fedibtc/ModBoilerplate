@@ -11,6 +11,18 @@ export default function Fallback({ children }: { children: React.ReactNode }) {
 
   const error = injectionError || authError;
 
+  if (error) {
+    return (
+      <Container className="p-2">
+        <Icon icon="IconCircleX" size="lg" className="text-lightGrey" />
+        <Text variant="h2" weight="bold">
+          An Error Occurred
+        </Text>
+        <Text className="text-center">{formatError(error)}</Text>
+      </Container>
+    );
+  }
+
   if (isLoading || isAuthLoading) {
     return (
       <Container>
@@ -20,18 +32,6 @@ export default function Fallback({ children }: { children: React.ReactNode }) {
           className="animate-spin text-lightGrey"
         />
         <Text>{isLoading ? "Loading" : "Authenticating"}...</Text>
-      </Container>
-    );
-  }
-
-  if (error) {
-    return (
-      <Container className="p-2">
-        <Icon icon="IconCircleX" size="lg" className="text-lightGrey" />
-        <Text variant="h2" weight="bold">
-          An Error Occurred
-        </Text>
-        <Text className="text-center">{formatError(error)}</Text>
       </Container>
     );
   }

@@ -7,13 +7,18 @@ import { Analytics } from "@vercel/analytics/react";
 import { Metadata } from "next";
 import "./globals.css";
 
+const env = process.env.NEXT_PUBLIC_ENV;
+
 export const metadata: Metadata = {
-  title:
-    "AI Assistant " + (process.env.NODE_ENV === "development" ? "🛠️" : "⚡️"),
+  title: `AI Assistant${env === "development" ? " 🔧" : env === "preview" ? " 🎤" : "⚡️"}`,
   description: "Sats for Chats",
-  icons: {
-    icon: "/favicon.ico",
-  },
+  icons: [
+    env === "production"
+      ? "logo.png"
+      : env === "preview"
+        ? "logo-preview.png"
+        : "logo-dev.png",
+  ],
 };
 
 export const viewport = {
@@ -21,8 +26,6 @@ export const viewport = {
   initialScale: 1,
   maximumScale: 1,
 };
-
-const env = process.env.NEXT_PUBLIC_ENV;
 
 export default function RootLayout({
   children,
@@ -38,7 +41,7 @@ export default function RootLayout({
             minSupportedAPIVersion="legacy"
             supportedBitcoinNetworks={{
               signet: env !== "production",
-              bitcoin: env !== "preview",
+              bitcoin: env === "production",
             }}
           >
             <AuthProvider>
