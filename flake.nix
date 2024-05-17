@@ -8,14 +8,11 @@
 
   outputs = { self, nixpkgs, flake-utils }:
     flake-utils.lib.eachDefaultSystem (system:
-      let pkgs = import nixpkgs { 
-        inherit system; 
-        config.allowUnfree = true;
-      };
+      let pkgs = import nixpkgs { inherit system; };
       in {
         devShells = {
           default = pkgs.mkShell {
-            nativeBuildInputs = [ pkgs.bun pkgs.nodejs_20 pkgs.mprocs pkgs.ngrok pkgs.docker ];
+            nativeBuildInputs = [ pkgs.bun pkgs.mprocs pkgs.ngrok pkgs.docker ];
           };
         };
       });
