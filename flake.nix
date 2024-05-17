@@ -12,7 +12,7 @@
       in {
         devShells = {
           default = pkgs.mkShell {
-            nativeBuildInputs = [ pkgs.bun pkgs.nodejs_20 pkgs.mprocs pkgs.ngrok pkgs.docker ];
+            nativeBuildInputs = [ pkgs.bun pkgs.mprocs pkgs.ngrok pkgs.docker ];
           };
         };
       });
